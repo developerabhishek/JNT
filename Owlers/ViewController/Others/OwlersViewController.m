@@ -11,6 +11,8 @@
 #import "Header.h"
 #import "LoginViewController.h"
 #import "Connectionmanager.h"
+#import "SharedPreferences.h"
+
 @interface OwlersViewController ()
 -(id) imageWithName:(NSArray *)arr;
 @property (strong,nonatomic) IBOutlet UIView *subview;
@@ -160,7 +162,7 @@ bool male_status = YES,female_status = YES,couple_status = YES;
     view_rsvp.hidden =YES;
     offer_view.hidden=YES;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    UserId= [defaults objectForKey:@"user_id"];
+    UserId= [defaults objectForKey:@"userID"];
        
     scrollview.delegate=self;
     [scrollview setScrollEnabled:YES];
@@ -1160,7 +1162,7 @@ bool male_status = YES,female_status = YES,couple_status = YES;
 - (IBAction)rsvpbtnAction:(id)sender {
     
     self.loginViewController = [[LoginViewController alloc] init];
-    Boolean check_login = [self.loginViewController login_status];
+    Boolean check_login = [[SharedPreferences sharedInstance] isLogin];
     
 
     

@@ -32,8 +32,6 @@
 - (IBAction)fbloginaction:(id)sender;
 
 - (IBAction)googleloginaction:(id)sender;
-
--(BOOL)login_status;
--(void)logout_status;
+;
 
 @end

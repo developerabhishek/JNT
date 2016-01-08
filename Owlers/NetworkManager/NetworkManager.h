@@ -25,5 +25,8 @@ typedef void (^CompletionHandler)(id result, NSError *err);
 + (void)loginWithEmail:(NSString *)email andPassword:(NSString *)password withComplitionHandler:(CompletionHandler)completionBlock;
 + (void)loginVerificationWithName:(NSString *)name email:(NSString *)email andMobileNumber:(NSString *)mobile withComplitionHandler:(CompletionHandler)completionBlock;
 + (void)getUserProfileFromServerWithComplitionHandler:(CompletionHandler)completionBlock;
++ (void)editUserProfile:(NSString *)name andMobileNumber:(NSString *)mobile withComplitionHandler:(CompletionHandler)completionBlock;
++ (void)forgetPasswordForEmail:(NSString *)email withComplitionHandler:(CompletionHandler)completionBlock;
+
 
 @end

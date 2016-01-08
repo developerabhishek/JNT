@@ -24,13 +24,11 @@ NSDictionary *parsedObject;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
+    // Do any additional setup after loading the view from its nib.    
     
     NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
-    NSObject * object = [prefs objectForKey:@"UserLoginIdSession"];
-    self.userNameTxtFld.text = [object valueForKey:@"name"];
-    self.emailTxtFld.text =  [object valueForKey:@"email"];
-    
+    self.userNameTxtFld.text = [prefs valueForKey:@"name"];
+    self.emailTxtFld.text =  [prefs valueForKey:@"userEmail"];
 }
 
 - (void)didReceiveMemoryWarning {

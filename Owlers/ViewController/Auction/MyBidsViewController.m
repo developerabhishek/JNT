@@ -19,7 +19,7 @@ NSString *UserId;
 - (void)viewDidLoad {
     [super viewDidLoad];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    UserId= [defaults objectForKey:@"user_id"];
+    UserId= [defaults objectForKey:@"userID"];
     
 
     NSString *urlstring =[NSString stringWithFormat:@"%@/auctions.php?user_id=41",BaseUrl];

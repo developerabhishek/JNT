@@ -54,6 +54,14 @@ static SharedPreferences *sharedInstance;
     return false;
 }
 
+- (void)logoutUser{    
+    NSUserDefaults *defauls = [NSUserDefaults standardUserDefaults];
+    [defauls removeObjectForKey:@"userID"];
+    [defauls synchronize];
+}
+
+
+
 - (NSString *)getUserID{    
     NSUserDefaults *defauls = [NSUserDefaults standardUserDefaults];
     return [defauls objectForKey:@"userID"];

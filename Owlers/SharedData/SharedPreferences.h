@@ -15,6 +15,7 @@
 + (BOOL)isNetworkAvailable;
 - (void)showCommonAlertWithMessage:(NSString *)alertMessage withObject:(UIViewController *)controllerObject;
 - (BOOL)isLogin;
+- (void)logoutUser;
 - (NSString *)getUserID;
 
 @end

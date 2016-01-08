@@ -13,5 +13,5 @@
 - (id)initWithDict:(NSDictionary *)dict;
 - (IBAction)backBtn:(UIBarButtonItem *)sender;
 - (IBAction)updateProfile:(id)sender;
-
+- (IBAction)logout:(id)sender;
 @end

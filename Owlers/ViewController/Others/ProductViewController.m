@@ -86,7 +86,7 @@ UIRefreshControl *refreshControl;
     
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    UserId= [defaults objectForKey:@"user_id"];
+    UserId= [defaults objectForKey:@"userID"];
     [self.navigationController setNavigationBarHidden:YES];
     
     location_arr = [[NSMutableArray alloc]init];
@@ -168,6 +168,11 @@ UIRefreshControl *refreshControl;
     });
     _sampleView.hidden=YES;
     
+}
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [self refereshDataArray];
 }
 
 - (void)refereshDataArray{
@@ -388,34 +393,24 @@ UIRefreshControl *refreshControl;
     [self.tableView setShowsVerticalScrollIndicator:NO];
     self.tableView.translatesAutoresizingMaskIntoConstraints = NO;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
+    [self.view addSubview:self.tableView];
     
     if ([[SharedPreferences sharedInstance] isLogin]) {
         self.tableView.frame = CGRectMake(5, 63, 200, 250);
     }else
         self.tableView.frame = CGRectMake(5, 63, 200, 100);
+    self.tableView.hidden = !self.tableView.hidden;
     
-    if (menucheck) {
-        menucheck= NO;
-        self.tableView.hidden = YES;
-    }else{
-        menucheck= YES;
-        self.tableView.hidden = NO;
-    }
-    [self.view addSubview:self.tableView];
+//    if (menucheck) {
+//        menucheck= NO;
+//        self.tableView.hidden = YES;
+//    }else{
+//        menucheck= YES;
+//        self.tableView.hidden = NO;
+//    }
+    [self.tableView reloadData];
     
 }
-
--(void)loginStatus{
-
-}
-
-//-(void)searchbarbutton:(UIButton *)sender
-//{
-//
-//   // self.search =[[UISearchBar alloc]init];
-//
-//}
-
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
@@ -442,17 +437,7 @@ UIRefreshControl *refreshControl;
     
     
     if (connection == connection_json) {
-        
-      //  location_arr = nil;
-      //  location_arr = [[NSMutableArray alloc]init];
-        
         NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:locationData options:NSJSONReadingMutableLeaves error:nil];
-        
-        NSLog(@"%@ city list ",dic);
-        
-      //        if (dic == NULL) {
-//            UIAlertView
-//        }
         
         NSArray *temparr = [dic objectForKey:@"Locations"];
       //  NSLog(@"Location array : %@",temparr);
@@ -479,22 +464,8 @@ UIRefreshControl *refreshControl;
         
     }
     serverDataDictionary = [NSJSONSerialization JSONObjectWithData:serverData options:NSJSONReadingMutableLeaves error:nil];
-    
     NSLog(@"serverDataArray =%@",serverDataDictionary);
-    
-//    NSString *items = [serverDataDictionary objectForKey:@"items"];
-//    
-//    if (items.length == 0) {
-//        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"ERROR" message:@"No data found according to search" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:NULL, nil];
-//        [alertView show];
-//        [self.listtable reloadData];
-//    }
-    
-    
-    
     [self.listtable reloadData];
-    
-   
 }
 
 
@@ -542,26 +513,12 @@ UIRefreshControl *refreshControl;
             
         }
         if (indexPath.row == 3) {
-            
-            
-            self.loginViewController = [[LoginViewController alloc] init];
-            
-            [self.loginViewController logout_status];
-            [self.dataArray removeAllObjects];
-            [self.dataArray addObject:@"Login"];
-            [self.dataArray addObject:@"Signup"];
-            [self loginStatus];
+            [[SharedPreferences sharedInstance] logoutUser];
+            [self refereshDataArray];
         }
         self.tableView.hidden=YES;
     }
-    
-    
-    
-    //    UIButton *btn ;
-    //
-    //
-    //    [btn setTitle:[self.dataArray objectAtIndex:indexPath.row] forState:UIControlStateNormal];
-    
+
     else if (tableView ==self.listtable)
     {
         
@@ -590,7 +547,6 @@ UIRefreshControl *refreshControl;
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
         }
         
-//        int dataIndex = (int) indexPath.row % [self.dataArray count];
         cell.textLabel.text = self.dataArray[indexPath.row];
         cell.textLabel.font = [UIFont systemFontOfSize:22];
         cell.textLabel.numberOfLines = 0;

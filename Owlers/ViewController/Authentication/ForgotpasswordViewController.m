@@ -8,6 +8,9 @@
 
 #import "ForgotpasswordViewController.h"
 #import "Header.h"
+#import "SharedPreferences.h"
+#import "NetworkManager.h"
+
 @interface ForgotpasswordViewController ()
 
 @property(nonatomic,strong) IBOutlet UITextField *emailAddress;
@@ -48,75 +51,35 @@
     
     if (self.textfld.text.length == 0)
     {
-        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:@"Please enter email address." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-        [alertView show];
+        [[SharedPreferences sharedInstance] showCommonAlertWithMessage:@"Please enter email address." withObject:self];
     }
     else if (![self validateEmail:self.textfld.text])
     {
-        UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:@"Please enter valid email address." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-        [alertView show];
-        
+        [[SharedPreferences sharedInstance] showCommonAlertWithMessage:@"Please enter valid email address." withObject:self];
         self.textfld.text = @"";
     }
 
     else
     {
-        if ([[ConnectionManager getSharedInstance] isConnectionAvailable])
-        {
-            
-            dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-                //Background Thread
-                [self.submit setEnabled:NO];
+        [NetworkManager forgetPasswordForEmail:self.emailAddress.text withComplitionHandler:^(id result, NSError *err) {
+        
+            if (result && [[result valueForKey:@"success"] integerValue] == 1)
+            {
+
+                UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"JNT" message:@"Your password sent to your email address" preferredStyle:UIAlertControllerStyleAlert];
                 
-                NSMutableDictionary *jsonDict = [[NSMutableDictionary alloc] init];
-                [jsonDict setValue:self.emailAddress.text forKey:@"Email"];
-                
-                
-                // Code to send expense data on server
-                NSMutableData *body = [NSMutableData data];
-                NSError *writeError = nil;
-                NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonDict options:NSJSONWritingPrettyPrinted error:&writeError];
-                NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-                NSURL *postUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@/forgot.php?",BaseUrl]];
-                
-                NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-                [request setURL:postUrl];
-                [request setCachePolicy:NSURLRequestUseProtocolCachePolicy];
-                [request setTimeoutInterval:7.0];
-                [request setHTTPMethod:@"POST"];
-                
-                NSString *contentType = [NSString stringWithFormat:@"application/json"];
-                [request addValue:contentType forHTTPHeaderField:@"Content-Type"];
-                [body appendData:[[NSString stringWithFormat:@"%@",jsonString] dataUsingEncoding:NSUTF8StringEncoding]];
-                [request setHTTPBody:body];
-                [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
-                 {
-                     dispatch_async(dispatch_get_main_queue(), ^(void){
-                         //Run UI Updates
-                         [self.submit setEnabled:YES];
-                         if (data.length > 0)
-                         {
-                             NSDictionary *parsedObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
-                             if ([[parsedObject valueForKey:@"success"] integerValue] == 1)
-                             {
-                                 UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:@"Your password sent to your email address." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-                                 [alertView show];
-                                 
-                                 [self dismissViewControllerAnimated:YES completion:NULL];
-                             }
-                             
-//                             if ([[parsedObject valueForKey:@"success"] integerValue] == 0)
-//                             {
-//                                 UIAlertView  *alertView = [[UIAlertView alloc] initWithTitle:nil message:@"This email id is not exist. Please register first." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-//                                 [alertView show];
-//                             }
-                         }
-                         
-                     });
-                     
-                 }];
-            });
-        }
+                UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                           handler:^(UIAlertAction * action)
+                                     {
+                                         [self.navigationController popViewControllerAnimated:YES];
+                                         
+                                     }];
+                [alertController addAction:ok];
+                [self presentViewController:alertController animated:YES completion:nil];
+            }else{
+                [[SharedPreferences sharedInstance] showCommonAlertWithMessage:[result valueForKey:@"message"] withObject:self];
+            }
+        }];
     }
 }
 

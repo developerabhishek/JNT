@@ -102,13 +102,13 @@ static NSString * const kClientID = @"509181039153-i4mnrf976n999ornrh2eafeeg1cf4
     
     NSString *message = @"";
     
-    if (self.emailtxtfld.text.length > 0)
+    if (self.emailtxtfld.text.length <= 0)
     {
         message = @"Please enter your email id";
     }else if (![self validateEmail: self.emailtxtfld.text])
     {
         message = @"Please enter a valid email id";
-    }else if (self.pwdtextfld.text.length > 0)
+    }else if (self.pwdtextfld.text.length <= 0)
     {
         message = @"Please enter your password";
     }
@@ -129,16 +129,23 @@ static NSString * const kClientID = @"509181039153-i4mnrf976n999ornrh2eafeeg1cf4
         
         if (result && [[result valueForKey:@"status"]  isEqual: @"success"])
         {
-            NSString *user_id = [result valueForKey:@"user_id"];
-            NSString *user_email = [result valueForKey:@"user_email"];
             NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-            [defaults setObject:user_email forKey:@"userEmail"];
-            [defaults setObject:user_id forKey:@"user_id"];
+            [defaults setObject:[result valueForKey:@"user_email"] forKey:@"userEmail"];
+            [defaults setObject:[result valueForKey:@"user_id"] forKey:@"userID"];
             [defaults synchronize];
 
-            dispatch_async(dispatch_get_main_queue(), ^(void){
-                [[SharedPreferences sharedInstance] showCommonAlertWithMessage:[result valueForKey:@"message"] withObject:self];
-            });
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"JNT" message:[result valueForKey:@"message"] preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                       handler:^(UIAlertAction * action)
+                                 {
+                                     [self.navigationController popViewControllerAnimated:YES];
+                                     
+                                 }];
+            [alertController addAction:ok];
+            [self presentViewController:alertController animated:YES completion:nil];
+        }else{
+            [[SharedPreferences sharedInstance] showCommonAlertWithMessage:[result valueForKey:@"message"] withObject:self];
         }
     }];
 }
@@ -157,7 +164,6 @@ static NSString * const kClientID = @"509181039153-i4mnrf976n999ornrh2eafeeg1cf4
 
 - (IBAction)fbloginaction:(id)sender
 {
-
     self.fbloginaction.readPermissions = @[@"public_profile"];
     FBSDKLoginManager *login = [[FBSDKLoginManager alloc] init];
     
@@ -199,46 +205,15 @@ static NSString * const kClientID = @"509181039153-i4mnrf976n999ornrh2eafeeg1cf4
     [[[FBSDKGraphRequest alloc] initWithGraphPath:@"me" parameters:parameters]
      startWithCompletionHandler:^(FBSDKGraphRequestConnection *connection, id result, NSError *error) {
          if (!error) {
-
-             NSUserDefaults *defauls = [NSUserDefaults standardUserDefaults];
-             [defauls setObject:result forKey:@"UserLoginIdSession"];
-             /*****[GETTING USERID AND USEREMAIL]******/
-             NSString *user_id = [result valueForKey:@"user_id"];
-             NSString *user_email = [result valueForKey:@"user_email"];
+             [self pushToVerificationControllerWith:@{@"user_id" : [result valueForKey:@"id"], @"user_email" : [result valueForKey:@"email"],@"name": [result valueForKey:@"name"]}];
              
-             /*********[SETTING SESSION LOGIN DETAILS]********/
-             [defauls setObject:user_email forKey:@"userEmail"];
-             [defauls setObject:user_id forKey:@"user_id"];
-             [[NSUserDefaults standardUserDefaults] synchronize];
-             
-             VerificationViewController *verficationController = [[VerificationViewController alloc] init];
-             [self.navigationController pushViewController:verficationController animated:YES];
          }else{
 
              [[SharedPreferences sharedInstance] showCommonAlertWithMessage:@"Could not connect to server" withObject:self];
          }
      }];
     
-    
 }
-
-
--(BOOL)login_status{
-    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
-    NSObject * object = [prefs objectForKey:@"user_id"];
-    if(object != nil){
-        return YES;
-    }else{
-        return NO;
-    }
-}
-
--(void)logout_status{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults removeObjectForKey:@"user_id"];
-    [defaults synchronize];
-}
-
 
 - (IBAction)googleloginaction:(id)sender;
 {
@@ -284,26 +259,25 @@ static NSString * const kClientID = @"509181039153-i4mnrf976n999ornrh2eafeeg1cf4
                 completionHandler:^(GTLServiceTicket *ticket,
                                     GTLPlusPerson *person,
                                     NSError *error) {
-                    if (error) {
+                    if (!error) {
                         
-                        
-                        
-                        //Handle Error
-                        
-                    } else
-                    {
-                        
-                        
-                        NSLog(@"Email= %@",[GPPSignIn sharedInstance].authentication.userEmail);
-                        NSLog(@"GoogleID=%@",person.identifier);
-                        NSLog(@"User Name=%@",[person.name.givenName stringByAppendingFormat:@" %@",person.name.familyName]);
-                        NSLog(@"Gender=%@",person.gender);
-                        
+                        [self pushToVerificationControllerWith:@{@"user_id" : person.identifier, @"user_email" : [GPPSignIn sharedInstance].authentication.userEmail ,@"name": person.displayName}];
                     }
                 }];
     }
-    
 }
+- (void)pushToVerificationControllerWith:(NSDictionary *)data{
+    
+    NSUserDefaults *defauls = [NSUserDefaults standardUserDefaults];
+    [defauls setObject:[data objectForKey:@"user_email"] forKey:@"userEmail"];
+    [defauls setObject:[data objectForKey:@"name"] forKey:@"name"];
+    [defauls setObject:[data objectForKey:@"user_id"] forKey:@"userID"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    VerificationViewController *verficationController = [[VerificationViewController alloc] init];
+    [self.navigationController pushViewController:verficationController animated:YES];
+}
+
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     [textField resignFirstResponder];
