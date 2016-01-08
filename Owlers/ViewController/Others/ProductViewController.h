@@ -51,25 +51,21 @@
     BOOL citycheck;
     BOOL flag;
     BOOL calendar_check;
-    BOOL login_status;
 
     UIScrollView *scrllview;
 }
 @property (strong, nonatomic)  NSString *location_id;
 @property(nonatomic,strong) UICollectionView *collection;
 @property (strong , nonatomic) IBOutlet UIImageView *loaderOwlersImage;
-
 @property(strong, nonatomic) UITableView *tableView;
 @property(strong, nonatomic) NSMutableArray *dataArray;
 @property (strong, nonatomic) UITableViewCell *customCell;
-
 @property (nonatomic, strong) LoginViewController * loginViewController;
-
 @property(strong,nonatomic) NSMutableArray *arraydata;
 @property(strong,nonatomic) NSArray *imagelist;
+
 -(IBAction)cityBtn:(id)sender;
 - (IBAction)btnAction:(id)sender;
-//@property (strong, nonatomic) IBOutlet UITextField *calendarAction;
 - (IBAction)calendarAction:(id)sender;
 
 @end

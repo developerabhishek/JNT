@@ -24,18 +24,12 @@
     // Dispose of any resources that can be recreated.
 }
 
-
-
 - (IBAction)addcardbtnAction:(id)sender {
     
     
 }
 
 - (IBAction)backbtnAction:(id)sender {
-    
-    SettingViewController *set=[[SettingViewController alloc]initWithNibName:@"SettingViewController" bundle:nil];
-    UINavigationController *navController = self.navigationController;
-    [navController popViewControllerAnimated:YES];
-    
+    [self.navigationController popViewControllerAnimated:YES];
 }
 @end

@@ -7,11 +7,11 @@
 //
 
 #import "AppDelegate.h"
-#import "SignupViewController.h"
 #import "Connectionmanager.h"
 #import "Header.h"
 #import "DBmanager.h"
-#import "LoginViewController.h"
+#import "SharedPreferences.h"
+#import "ProductViewController.h"
 
 #import <GooglePlus/GooglePlus.h>
 #import <FBSDKLoginKit/FBSDKLoginManager.h>
@@ -29,16 +29,8 @@
     
     // Override point for customization after application launch.
     self.window = [[UIWindow alloc]initWithFrame:[[UIScreen mainScreen] bounds]];
-    StartinhViewController *startingview=[[StartinhViewController alloc]initWithNibName:@"StartinhViewController" bundle:Nil];
     
-    //OwlersLoaderViewController *startingview = [[OwlersLoaderViewController alloc]initWithNibName:@"OwlersLoaderViewController" bundle:Nil];
-    
-    
-    UINavigationController *navigationController=[[UINavigationController alloc]initWithRootViewController:startingview];
-    
-    self.window.rootViewController=navigationController;
-    [self.window makeKeyAndVisible];
-    
+    [self setRootViewController];
     
     
     if ([application respondsToSelector:@selector(isRegisteredForRemoteNotifications)])
@@ -53,28 +45,25 @@
         [application registerForRemoteNotificationTypes:
          (UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeSound)];
     }
-    
-
-    
-    
-
     return [[FBSDKApplicationDelegate sharedInstance] application:application
                                     didFinishLaunchingWithOptions:launchOptions];
-//    
-//    NSError* configureError;
-//    return  [[EAGLContext sharedInstance] configureWithError: &configureError];
-//    NSAssert(!configureError, @"Error configuring Google services: %@", configureError);
-//    
-        
-//    NSError* configureError;
-//    
-//    [[GGLContext sharedInstance] configureWithError: &configureError];
-//    
-//    NSAssert(!configureError, @"Error configuring Google services: %@", configureError);
-//    
-//    [GIDSignIn sharedInstance].delegate = self;
-//    return YES;
-//
+}
+
+- (void)setRootViewController{
+
+    UINavigationController *navigationController = nil;
+    if([[SharedPreferences sharedInstance] isLogin])
+    {
+        ProductViewController *productiView =[[ProductViewController alloc]init];
+        navigationController=[[UINavigationController alloc]initWithRootViewController:productiView];
+    }else{
+        StartinhViewController *startingview=[[StartinhViewController alloc]initWithNibName:@"StartinhViewController" bundle:Nil];
+        navigationController=[[UINavigationController alloc]initWithRootViewController:startingview];
+    }
+    
+    self.window.rootViewController=navigationController;
+    [self.window makeKeyAndVisible];
+
 }
 
 

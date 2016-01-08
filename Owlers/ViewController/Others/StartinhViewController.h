@@ -10,18 +10,13 @@
 #import "LoginViewController.h"
 #import "SignupViewController.h"
 @interface StartinhViewController : UIViewController<UIPageViewControllerDataSource>
-{
-    
+{    
     NSArray *arr_images ,*arr_labels;
-   // IBOutlet UIScrollView *scrollView;
     BOOL check_images;
     IBOutlet UIImageView *myimageview;
     IBOutlet NSLayoutConstraint *leftViewHorizondalRightPadding;
     IBOutlet  NSLayoutConstraint *rightViewHorizondalRightPadding;
 
-  //  IBOutlet UIPageControl *pageControl;
-//    IBOutlet UIImage *image1, *image2, *image3, *image4;
-//    BOOL gombsar_check;
 }
 
 @property (assign, nonatomic) NSInteger index;
@@ -37,9 +32,5 @@
 - (IBAction)loginBtnaction:(id)sender;
 - (IBAction)signinbtnaction:(id)sender;
 - (IBAction)skipbtnaction:(id)sender;
-- (IBAction)pageControl:(UIPageControl *)sender;
-
-
-- (IBAction)handleSwipe:(UISwipeGestureRecognizer *)sender;
 
 @end

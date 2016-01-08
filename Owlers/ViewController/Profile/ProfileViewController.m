@@ -14,12 +14,11 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIView.h>
 #import <UIKit/UIKitDefines.h>
-@interface ProfileViewController (){
-    
-    
-    NSString *UserId;
-}
+#import "NetworkManager.h"
+#import "SharedPreferences.h"
 
+
+@interface ProfileViewController ()
 @end
 
 @implementation ProfileViewController
@@ -28,13 +27,9 @@
 
 
 NSURLConnection *connection_, *_connection;
-NSString *UserId;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    UserId= [defaults objectForKey:@"user_id"];
-    
     
     tableview.delegate=self;
     tableview.dataSource=self;
@@ -43,72 +38,33 @@ NSString *UserId;
     self.navigationItem.hidesBackButton = YES;
     
     
-    NSString *_urlstring=[NSString stringWithFormat:@"%@/profile.php?user_id=%@",BaseUrl,[[NSUserDefaults standardUserDefaults] valueForKey:@"user_id"]];
+//    NSString *_urlstring=[NSString stringWithFormat:@"%@/profile.php?user_id=%@",BaseUrl,[[NSUserDefaults standardUserDefaults] valueForKey:@"user_id"]];
+//    
+//    NSLog(@"Url to fetch profile details : %@",_urlstring);
+//    //  [defaults objectForKey:@"userID"]];
+//    NSURL *url_=[[NSURL alloc]initWithString:_urlstring];
+//    NSURLRequest *request_=[[NSURLRequest alloc]initWithURL:url_];
+//    connection_=[[NSURLConnection alloc]initWithRequest:request_ delegate:self];
+//    [connection_ start];
+//    
+//  //  NSString *string_url=[NSString stringWithFormat:@"%@/get_booking.php?user_id=%@",BaseUrl,[[NSUserDefaults standardUserDefaults] valueForKey:@"user_id"]];
+//    NSString *string_url=[NSString stringWithFormat:@"%@/get_booking.php?user_id=41",BaseUrl];
+//    
+//    
+//    // NSLog(@"my json data =%@",string_url);
+//    NSURL *_url=[[NSURL alloc]initWithString:string_url];
+//    NSURLRequest *_request=[[NSURLRequest alloc]initWithURL:_url];
+//    _connection=[[NSURLConnection alloc]initWithRequest:_request delegate:self];
+//    [_connection start];
     
-    NSLog(@"Url to fetch profile details : %@",_urlstring);
-    //  [defaults objectForKey:@"userID"]];
-    NSURL *url_=[[NSURL alloc]initWithString:_urlstring];
-    NSURLRequest *request_=[[NSURLRequest alloc]initWithURL:url_];
-    connection_=[[NSURLConnection alloc]initWithRequest:request_ delegate:self];
-    [connection_ start];
-    
-  //  NSString *string_url=[NSString stringWithFormat:@"%@/get_booking.php?user_id=%@",BaseUrl,[[NSUserDefaults standardUserDefaults] valueForKey:@"user_id"]];
-    NSString *string_url=[NSString stringWithFormat:@"%@/get_booking.php?user_id=41",BaseUrl];
-    
-    
-    // NSLog(@"my json data =%@",string_url);
-    NSURL *_url=[[NSURL alloc]initWithString:string_url];
-    NSURLRequest *_request=[[NSURLRequest alloc]initWithURL:_url];
-    _connection=[[NSURLConnection alloc]initWithRequest:_request delegate:self];
-    [_connection start];
-    
-}
-
-
--(void)viewWillLayoutSubviews{
-    
-    scrolview.frame = CGRectMake( 0, scrolview.frame.origin.y, self.view.frame.size.width*2, scrolview.frame.size.height);
-    
-    scrolview.scrollEnabled = YES;
-    scrolview.bounces = NO;
-    scrolview.pagingEnabled = YES;
-    for (int i=0; i<2; i++) {
-        
-        
-        
-        
-        if (i==0) {
-            
-            tableview.frame = CGRectMake(self.view.frame.size.width*i, 0, self.view.frame.size.width, scrolview.frame.size.height);
-            
-            
-            [scrolview addSubview:tableview];
-            
-        }else{
-            
-            UIImageView *image = [[UIImageView alloc]initWithFrame:CGRectMake(self.view.frame.size.width*i, 0, self.view.frame.size.width, scrolview.frame.size.height)];
-            image.backgroundColor = [UIColor whiteColor];
-            // image.backgroundColor = [UIColor brownColor];
-            
-            UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(self.view.frame.size.width+10, 10, self.view.frame.size.width-20, 20)];
-            label.text = @"lkdjfkjdkfjkjf";
-            
-            
-            [scrolview addSubview:image];
-            label.text = @"Here Wallet detail of user will show !!";
-            [scrolview addSubview:label];
-            
+    [NetworkManager getUserProfileFromServerWithComplitionHandler:^(id result, NSError *err) {
+        if ([[result objectForKey:@"status"] isEqualToString:@"Y"]) {
+            serverDictionary = result;
+            _nameLabel.text=[result  objectForKey:@"name"];
+            _emaillabel.text=[result objectForKey:@"email"];
+            _mobileNoLabel.text=[result objectForKey:@"phone"];
         }
-        
-        
-    }
-    tableview.bounces = NO;
-    tableview.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    [scrolview setContentSize:CGSizeMake(self.view.frame.size.width*3, 0)];
-    
-    
-    
-    
+    }];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
@@ -122,36 +78,11 @@ NSString *UserId;
     
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
-{
-    
-    if (connection ==connection_) {
-        serverData = [[NSMutableData alloc]init];
-    }
-    else if (connection ==_connection){
-        serDATA =[[NSMutableData alloc]init];
-    }
-}
-
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
-{
-    
-    if (connection ==connection_) {
-        [serverData appendData:data];
-    }
-    else if (connection ==_connection)
-    {
-        [serDATA appendData:data];
-    }
-}
-
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
     
     if (connection ==connection_) {
         serverDictionary = [NSJSONSerialization JSONObjectWithData:serverData options:NSJSONReadingMutableLeaves error:nil];
-        
-        // NSLog(@"serverDataArray =%@",serverDictionary);
         
         _nameLabel.text=[NSString stringWithFormat:@"%@",[serverDictionary  objectForKey:@"name"]];
         _emaillabel.text=[NSString stringWithFormat:@"%@",[serverDictionary objectForKey:@"email"]];
@@ -161,9 +92,6 @@ NSString *UserId;
     else if (connection ==_connection)
     {
         serDICT =[NSJSONSerialization JSONObjectWithData:serDATA options:NSJSONReadingMutableLeaves error:nil];
-        
-        
-        // NSLog(@"my json data =%@",serDICT);
         
         [self.tableview reloadData];
     }
@@ -237,12 +165,6 @@ NSString *UserId;
     }
 }
 
-/*
- -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary<NSString *,id> *)editingInfo{
- 
- 
- 
- }*/
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     NSLog(@"info = %@", info);
@@ -260,20 +182,13 @@ NSString *UserId;
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-
-
-
 - (IBAction)editbtnAction:(id)sender {
-    EditViewController *edit=[[EditViewController alloc]init];
+    EditViewController *edit=[[EditViewController alloc]initWithDict:serverDictionary];
     [self.navigationController pushViewController:edit animated:YES];
 }
 
 - (IBAction)backBtn:(UIBarButtonItem *)sender {
-    
-    ProductViewController *view =[[ProductViewController alloc]initWithNibName:@"ProductViewController" bundle:nil];
-    UINavigationController *navController = self.navigationController;
-    [navController popViewControllerAnimated:YES];
-    
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -284,9 +199,6 @@ NSString *UserId;
 {
     static NSString *celid =@"cell";
     CustomCell3*cell = [tableView dequeueReusableCellWithIdentifier:celid];
-    
-    NSLog(@"dict =%lu",(unsigned long)serDICT.count);
-    NSLog([serDICT objectForKey:(@"history")]);
     
     /*******[CHECKING SERVER DATA IS EMPTY OR NOT]*********/
     if([[serDICT objectForKey:(@"history")] isEqualToString:@"No Data Found"]){
@@ -307,10 +219,7 @@ NSString *UserId;
             cell.viewd.hidden=YES;
         cell.label1.text=[[[serDICT objectForKey:(@"history")]objectAtIndex:indexPath.row]objectForKey:@"event_name"];
         cell.label2.text=[[[serDICT objectForKey:(@"history")]objectAtIndex:indexPath.row]objectForKey:@"event_venue"];
-        //cell.label3.text=[[[serDICT objectForKey:(@"history")]objectAtIndex:indexPath.row]objectForKey:@""];
         cell.rupees_Lab.text =[[[serDICT objectForKey:@"history"]objectAtIndex:indexpath.row]objectForKey:@"total_amount"];
-        // cell.description_label.text =[[[serDICT objectForKey:@"history"]objectAtIndex:indexpath.row]objectForKey:@"event_description"];
-        //  cell.condition_label.text =[[[serDICT objectForKey:@"history"]objectAtIndex:indexpath.row]objectForKey:@"event_terms"];
         NSString *strgfhfg=[[[serDICT objectForKey:(@"history")]objectAtIndex:indexPath.row]objectForKey:@"event_date"];
         
         NSArray *itemsrr = [strgfhfg componentsSeparatedByString:@" "];   //take the one arraysplit the string
@@ -320,11 +229,6 @@ NSString *UserId;
         cell.date_label.text =dddd;
         NSString *ddddff = [itemsrr objectAtIndex:1];
         cell.time_label.text =ddddff;
-        
-        
-        // NSLog(@"arr time =%@",dddd);
-        //  NSLog(@"arr date =%@",ddddff);
-        
         NSString *payment_mrthod = [[[serDICT objectForKey:(@"history")]objectAtIndex:indexPath.row]objectForKey:@"payment_method"];
         
         if([payment_mrthod isEqual:@"Cash"]){
@@ -343,21 +247,15 @@ NSString *UserId;
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     
     NSUserDefaults *userdefault = [NSUserDefaults standardUserDefaults];
-    
     [userdefault setObject:@"" forKey:@"index"];
-    
     
     if (indexpath==indexPath) {
         NSLog(@"this is same indexpath");
         indexpath=nil;
         [userdefault setObject:@"60" forKey:@"changecell"];
     }else{
-        
-        
         indexpath=indexPath;
         [userdefault setObject:@"250" forKey:@"changecell"];
-        
-        
     }
     
     [tableview reloadData];

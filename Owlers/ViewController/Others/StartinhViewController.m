@@ -9,7 +9,8 @@
 #import "StartinhViewController.h"
 #import "ProductViewController.h"
 #import "APPChildViewController.h"
-#import "Connectionmanager.h"
+#import "SharedPreferences.h"
+#import "NetworkManager.h"
 @interface StartinhViewController ()
 
 @end
@@ -26,11 +27,6 @@ int currentIndex = 0;
 - (void)viewDidLoad {
     [super viewDidLoad];
     [[self navigationController] setNavigationBarHidden:YES animated:YES];
-    
-    
-//    UIPageControl *pageControl = [UIPageControl alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
-//    [self.view addSubView:pageControl];
-//
     
     /************[PAGECONTROLLER FOR SLIDER START]**************/
     self.pageController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal options:nil];
@@ -152,45 +148,36 @@ int currentIndex = 0;
     }
 }
 - (IBAction)loginBtnaction:(id)sender {
-    
-    if ([[ConnectionManager getSharedInstance] isConnectionAvailable]){
+    if ([SharedPreferences isNetworkAvailable]){
+        
         LoginViewController *login=[[LoginViewController alloc]init];
         [self.navigationController pushViewController:login animated:YES];
     }
     else{
-        UIAlertView * alertView = [[UIAlertView alloc]initWithTitle:@"OK" message:@"The network connection is not available" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:NULL, nil];
-        [alertView show];
+        [[SharedPreferences sharedInstance] showCommonAlertWithMessage:@"The network connection is not available" withObject:self];
+        
     }
 }
 
 - (IBAction)signinbtnaction:(id)sender {
-    if ([[ConnectionManager getSharedInstance] isConnectionAvailable]){
+    if ([SharedPreferences isNetworkAvailable]){
         
         SignupViewController *signup=[[SignupViewController alloc]init];
         [self.navigationController pushViewController:signup animated:YES];
     }
     else{
-        UIAlertView * alertView = [[UIAlertView alloc]initWithTitle:@"OK" message:@"The network connection is not available" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:NULL, nil];
-        [alertView show];
-    }
+        [[SharedPreferences sharedInstance] showCommonAlertWithMessage:@"The network connection is not available" withObject:self];
 
-    
+    }
 }
 
 - (IBAction)skipbtnaction:(id)sender {
-    
-    
-    NSURL *scriptUrl = [NSURL URLWithString:@"http://www.google.com/m"];
-    NSData *data = [NSData dataWithContentsOfURL:scriptUrl];
-    if ([[ConnectionManager getSharedInstance] isConnectionAvailable]){
+    if ([SharedPreferences isNetworkAvailable]){
         ProductViewController * view =[[ProductViewController alloc]init];
         [self.navigationController pushViewController:view animated:YES];
-        //OwlersLoaderViewController * view =[[OwlersLoaderViewController alloc]init];
-        //[self.navigationController pushViewController:view animated:YES];
     }
     else{
-        UIAlertView * alertView = [[UIAlertView alloc]initWithTitle:@"OK" message:@"The network connection is not available" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:NULL, nil];
-        [alertView show];
+        [[SharedPreferences sharedInstance] showCommonAlertWithMessage:@"The network connection is not available" withObject:self];
     }
     
 

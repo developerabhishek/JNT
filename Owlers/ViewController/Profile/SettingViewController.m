@@ -55,17 +55,12 @@ UIButton *button;
 }
 
 - (IBAction)backBtnAction:(id)sender {
-    ProductViewController *produ=[[ProductViewController alloc]initWithNibName:@"ProductViewController" bundle:nil];
-    UINavigationController *navController = self.navigationController;
-    [navController popViewControllerAnimated:YES];
-
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (IBAction)changePwdBtnAction:(id)sender {
-    
     ChangePasswordViewController *change =[[ChangePasswordViewController alloc]init];
-    [self.navigationController pushViewController:change animated:YES];
-    
+    [self.navigationController pushViewController:change animated:YES];    
 }
 
 - (IBAction)billingbtnAction:(id)sender {

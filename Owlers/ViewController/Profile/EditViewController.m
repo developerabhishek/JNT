@@ -10,18 +10,37 @@
 #import "ProfileViewController.h"
 @interface EditViewController ()
 
+@property(nonatomic,strong) NSDictionary *dataDict;
+@property(nonatomic,strong) IBOutlet    UITextField *userName;
+@property(nonatomic,strong) IBOutlet    UITextField *email;
+@property(nonatomic,strong) IBOutlet    UITextField *phone;
+
 @end
 
 @implementation EditViewController
 
+- (id)initWithDict:(NSDictionary *)dict{
+    if (self == [super init]) {
+        _dataDict = [[NSDictionary alloc] initWithDictionary:dict];
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self showDataOnView];
     // Do any additional setup after loading the view from its nib.
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)showDataOnView{
+    _userName.text=[_dataDict  objectForKey:@"name"];
+    _email.text=[_dataDict objectForKey:@"email"];
+    _phone.text=[_dataDict objectForKey:@"phone"];
 }
 
 /*
@@ -35,10 +54,10 @@
 */
 
 - (IBAction)backBtn:(UIBarButtonItem *)sender {
-    ProfileViewController *view =[[ProfileViewController alloc]initWithNibName:@"ProfileViewController" bundle:nil];
-    UINavigationController *navController = self.navigationController;
-    [navController popViewControllerAnimated:YES];
-    
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (IBAction)updateProfile:(id)sender{
 
 }
 @end

@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "StartinhViewController.h"
 @interface SignupViewController : UIViewController<UIScrollViewDelegate,UITextFieldDelegate>
 {
     NSData *data;

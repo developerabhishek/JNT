@@ -43,12 +43,7 @@ NSDictionary *parsedObject;
 
 
 - (IBAction)backbtnaction:(id)sender {
-
-    StartinhViewController *startView=[[StartinhViewController alloc]initWithNibName:@"StartinhViewController" bundle:nil];
-        UINavigationController *navController = self.navigationController;
-    [navController popViewControllerAnimated:YES];
-    
-
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (IBAction)continuebtnaction:(id)sender {

@@ -12,7 +12,18 @@ typedef void (^CompletionHandler)(id result, NSError *err);
 
 @interface NetworkManager : NSObject
 
+//Auction
 + (void)loadAcutionsForCity:(NSString *)cityID withComplitionHandler:(CompletionHandler)completionBlock;
 + (void)loadLocationWithComplitionHandler:(CompletionHandler)completionBlock;
++ (void)loadAuctionDetailsForAuction:(NSString *)auctionID withComplitionHandler:(CompletionHandler)completionBlock;
++ (void)checkAuctionBidForAuction:(NSString *)auctionID withComplitionHandler:(CompletionHandler)completionBlock;
++ (void)saveBidForAuction:(NSString *)auctionID andBidAmount:(NSString *)amount andBuyNow:(BOOL)isBuyNow
+    withComplitionHandler:(CompletionHandler)completionBlock;
+
+// Login
++ (void)changeOldPassword:(NSString *)oldPassword toNewPassword:(NSString *)newPassword withComplitionHandler:(CompletionHandler)completionBlock;
++ (void)loginWithEmail:(NSString *)email andPassword:(NSString *)password withComplitionHandler:(CompletionHandler)completionBlock;
++ (void)loginVerificationWithName:(NSString *)name email:(NSString *)email andMobileNumber:(NSString *)mobile withComplitionHandler:(CompletionHandler)completionBlock;
++ (void)getUserProfileFromServerWithComplitionHandler:(CompletionHandler)completionBlock;
 
 @end

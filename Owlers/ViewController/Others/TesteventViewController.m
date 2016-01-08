@@ -52,10 +52,6 @@
     
 }
 - (IBAction)backBtnAction:(id)sender {
-    OwlersViewController *owlers=[[OwlersViewController alloc]initWithNibName:@"OwlersViewController" bundle:nil];
-    UINavigationController *navController = self.navigationController;
-    [navController popViewControllerAnimated:YES];
-
-    
+    [self.navigationController popViewControllerAnimated:YES];
 }
 @end

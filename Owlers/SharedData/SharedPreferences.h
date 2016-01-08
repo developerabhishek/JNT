@@ -7,8 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @interface SharedPreferences : NSObject
 
++ (SharedPreferences*) sharedInstance;
 + (BOOL)isNetworkAvailable;
+- (void)showCommonAlertWithMessage:(NSString *)alertMessage withObject:(UIViewController *)controllerObject;
+- (BOOL)isLogin;
+- (NSString *)getUserID;
+
 @end

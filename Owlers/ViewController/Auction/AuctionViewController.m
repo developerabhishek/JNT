@@ -29,6 +29,10 @@ NSURLConnection *conne_ction ,*connection_;
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    NSLog(@"%@",[[UIDevice currentDevice] model]);
+    NSLog(@"%@",[[UIDevice currentDevice] name]);
+    
+    
     self.citytable.hidden=YES;
     [self loadData];
 }
@@ -96,15 +100,8 @@ NSURLConnection *conne_ction ,*connection_;
 {
     if (tableView ==tableView1) {
         
-        BidSectionViewController *bid =[[BidSectionViewController alloc]init];
-        NSString *temp_img = @"http://corporatewebsitecreate.com/demo/owlers/auction_images/";
-        NSString *temp = [[[serverDict objectForKey:(@"items")]objectAtIndex:indexPath.row]objectForKey:@"auction_image"];
-        NSString *str = [NSString stringWithFormat:@"%@%@",temp_img,temp];
-        bid.url = str;
-        bid.desc = [[[serverDict objectForKey:(@"items")]objectAtIndex:indexPath.row]objectForKey:@"auction_desc"];
-        bid.owlersname=[[[serverDict objectForKey:(@"items")]objectAtIndex:indexPath.row]objectForKey:@"auction_name"];
-        bid.amount =[[[serverDict objectForKey:(@"items")]objectAtIndex:indexPath.row]objectForKey:@"buy_now_price"];
-        
+        NSDictionary *dict = [[serverDict objectForKey:(@"items")]objectAtIndex:indexPath.row];
+        BidSectionViewController *bid =[[BidSectionViewController alloc]initwithDict:dict];
         [self.navigationController pushViewController:bid animated:YES];
     }
     else {

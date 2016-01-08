@@ -10,210 +10,109 @@
 #import "ProductViewController.h"
 #import "Connectionmanager.h"
 #import "Header.h"
+#import "NetworkManager.h"
+#import "SharedPreferences.h"
+#import "UIImageView+WebCache.h"
+
 @interface BidSectionViewController ()
+
+@property(nonatomic,strong) NSDictionary    *acutionData;
 
 @end
 
 @implementation BidSectionViewController
 NSString *UserId;
-@synthesize desc,owlersname,owlersimage,amount,url;
+
+
+- (id)initwithDict:(NSDictionary *)auctionDict{
+    if(self == [super init]){
+        _acutionData = auctionDict;
+    }
+    return self;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    UserId= [defaults objectForKey:@"user_id"];
+    [self setDetailsOfAution:_acutionData];
+    [NetworkManager loadAuctionDetailsForAuction:[_acutionData objectForKey:@"auction_id"] withComplitionHandler:^(id result, NSError *err) {
+        _acutionData = [[result objectForKey:@"items"] firstObject];
+        [self setDetailsOfAution:_acutionData];
+    }];
     
-
-    self.descLabel.text=desc;
-    self.nameLabel.text=owlersname;
-    self.amountLabel.text=amount;
-   // self.imageoo.image=owlersimage;
-    
-
-    
-    NSString *urlstring =[NSString stringWithFormat:@"%@/get_bid.php?auction_id=%@",BaseUrl,UserId];
-    NSURL *url =[[NSURL alloc]initWithString:urlstring];
-    NSURLRequest *request =[[NSURLRequest alloc]initWithURL:url];
-    NSURLConnection *connection =[[NSURLConnection alloc]initWithRequest:request delegate:self];
-    [connection start];
-    
-    [self downloadImageWithURL:[NSURL URLWithString:self.url] completionBlock:^(BOOL succeeded, UIImage *image) {
-        
-        if (succeeded) {
-            
-            // change the image in the cell
-            [self.imageoo setImage:image];
-            
-            // cell.image = image;
-            
-        }}];
-    
-                          
+    UITapGestureRecognizer *keyBoardHideRecognizer = [[UITapGestureRecognizer alloc] init];
+    [keyBoardHideRecognizer addTarget:self action:@selector(hideKeyBoard)];
+    [self.view addGestureRecognizer:keyBoardHideRecognizer];
 }
 
-
--(void)viewWillLayoutSubviews{
-
-    scrollview.contentSize = CGSizeMake(0, 750);
-
-}
-
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
-{
-    NSLog(@"Error = %@", [error localizedDescription]);
-}
-
--(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
-{
-    serverdata =[[NSMutableData alloc]init];
-}
--(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
-{
-    [serverdata appendData:data];
-}
--(void)connectionDidFinishLoading:(NSURLConnection *)connection
-{
-    serverDictionary =[NSJSONSerialization JSONObjectWithData:serverdata options:NSJSONReadingMutableLeaves error:nil];
-    NSLog(@"my json data =%@",serverDictionary);
+- (void)setDetailsOfAution:(NSDictionary *)dict{
+    self.descLabel.text= [dict objectForKey:@"auction_desc"];
+    self.nameLabel.text= [dict objectForKey:@"auction_name"];
+    self.amountLabel.text= [dict objectForKey:@"buy_now_price"];
+    self.totalBidLabel.text=[NSString stringWithFormat:@"%@",[dict objectForKey:@"total_bids"]];
+    self.maxbidLabel.text=[NSString stringWithFormat:@"%@",[dict objectForKey:@"opening_price"]];
     
-    // _getDetailLabel.text=[NSString stringWithFormat:@"%@",[[[serverdict objectForKey:@"events"] objectAtIndex:0]objectForKey:@"event_desc"]];
+    NSString *imageURL = [NSString stringWithFormat:@"http://owlers.com/auction_images/%@",[dict objectForKey:@"auction_image"]];
     
-    _maxbidLabel.text=[NSString stringWithFormat:@"%@",[serverDictionary objectForKey:@"total_bids"]];
-    _totalBidLabel.text=[NSString stringWithFormat:@"%@",[serverDictionary objectForKey:@"max_bidAmount"]];
-    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.imageoo sd_setImageWithURL:[NSURL URLWithString:imageURL]
+                        placeholderImage:[UIImage imageNamed:@"new_background_ullu.png"]];
+    });
 }
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
 
-
 - (IBAction)backBtnAction:(id)sender {
-    ProductViewController *pro=[[ProductViewController alloc]initWithNibName:@"ProductViewController" bundle:nil];
-    
-    UINavigationController *navigate=self.navigationController;
-    [navigate popViewControllerAnimated:YES];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 - (IBAction)cancelBtnAction:(id)sender {
-    ProductViewController *pro=[[ProductViewController alloc]init];
-    UINavigationController *navi=self.navigationController;
-    [navi popViewControllerAnimated:YES];
-}
-- (void)downloadImageWithURL:(NSURL *)url completionBlock:(void (^)(BOOL succeeded, UIImage *image))completionBlock
-
-{
-    
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    
-    [NSURLConnection sendAsynchronousRequest:request
-     
-                                       queue:[NSOperationQueue mainQueue]
-     
-                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-                               
-                               if ( !error )
-                                   
-                               {
-                                   
-                                   UIImage *image = [[UIImage alloc] initWithData:data];
-                                   
-                                   completionBlock(YES,image);
-                                   
-                               } else{
-                                   
-                                   completionBlock(NO,nil);
-                                   
-                               }
-                               
-                           }];
-    
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (IBAction)buyBtnAction:(id)sender {
-    
-    if ([[ConnectionManager getSharedInstance] isConnectionAvailable])
-    {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-            
-            
-            NSString *urlString = [NSString stringWithFormat:@"%@/save_buy_now.php?user_id=%@&auction_id=%@&bid_amount=%@",BaseUrl,@"41", @"2", amount];
-            NSURL *url = [[NSURL alloc]initWithString:urlString];
-            NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
-            
-            [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
-             {
-                 dispatch_async(dispatch_get_main_queue(), ^(void){
-                     if (data.length > 0)
-                     {
-                         NSDictionary *parsedObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
-                         
-                         NSLog(@"parsedObject =%@",parsedObject);
-                         
-                NSString* message = [parsedObject  objectForKey:@"message"];
-                NSLog(@"message   =%@",message);
-                         
-                         UIAlertView  *alertView = [[UIAlertView alloc] initWithTitle:nil message:@"You have buyed auction." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-                         [alertView show];
-                         
-                         }
-                     
-                 });
-             }];
-        });
-    }
-    
+    [NetworkManager saveBidForAuction:[_acutionData objectForKey:@"auction_id"] andBidAmount:[_acutionData objectForKey:@"buy_now_price"] andBuyNow:TRUE withComplitionHandler:^(id result, NSError *err){
+        NSString* message = [result  objectForKey:@"message"];
+        [[SharedPreferences sharedInstance] showCommonAlertWithMessage:message withObject:self];
+    }];    
 }
 
 - (IBAction)submitBtnAction:(id)sender {
-    
-    if ([[ConnectionManager getSharedInstance] isConnectionAvailable])
-    {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-            
-            
-            NSString *urlString = [NSString stringWithFormat:@"%@/save_bid.php?user_id=%@&auction_id=%@&bid_amount=%@",BaseUrl,@"41", @"2", self.bidAmtTextFld.text];
-            NSURL *url = [[NSURL alloc]initWithString:urlString];
-            NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
-            
-            [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
-             {
-                 dispatch_async(dispatch_get_main_queue(), ^(void){
-                     if (data.length > 0)
-                     {
-                         NSDictionary *parsedObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
-                         
-                        NSLog(@"parsedObject =%@",parsedObject);
-                         
-                         NSString* message = [parsedObject  objectForKey:@"message"];
-                         NSLog(@"message   =%@",message);
-                         UIAlertView  *alertView = [[UIAlertView alloc] initWithTitle:nil message:@"Please enter the amount greater than 150000" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-                         [alertView show];
-
-                     }
-                     
-                 });
-             }];
-        });
-    }
-    
+    [NetworkManager saveBidForAuction:[_acutionData objectForKey:@"auction_id"] andBidAmount:self.bidAmtTextFld.text andBuyNow:FALSE withComplitionHandler:^(id result, NSError *err) {
+        if (![[result  objectForKey:@"status"] isEqualToString:@"Failure"]) {
+            self.maxbidLabel.text = self.bidAmtTextFld.text;
+        }
+        NSString* message = [result  objectForKey:@"message"];
+        [[SharedPreferences sharedInstance] showCommonAlertWithMessage:message withObject:self];
+    }];
 }
--(BOOL)textFieldShouldReturn:(UITextField *)textField
-{
+-(BOOL)textFieldShouldReturn:(UITextField *)textField{
     [textField resignFirstResponder];
     return textField;
 }
 
 -(void)textFieldDidBeginEditing:(UITextField *)textField{
-
-    scrollview.contentOffset = CGPointMake(0, 100);
-   
-
+    [self animateScrolView:CGPointMake(0, 120)];
 }
 
 -(void)textFieldDidEndEditing:(UITextField *)textField{
+    [self animateScrolView:CGPointMake(0, 0)];
+}
 
-     scrollview.contentOffset = CGPointMake(0, 0);
+- (void)animateScrolView:(CGPoint)contentOffset{
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationDuration:0.3];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    self.scrollview.contentOffset = contentOffset;
+    [UIView commitAnimations];
+}
 
+-(void)hideKeyBoard
+{
+    [self.bidAmtTextFld resignFirstResponder];
+    [self animateScrolView:CGPointMake(0, 0)];
 }
 
 

@@ -13,12 +13,6 @@
 #import "AppDelegate.h"
 
 @interface LoginViewController : UIViewController<UITextFieldDelegate,UIAlertViewDelegate,GPPSignInDelegate>
-{
-    
-    IBOutlet UIButton *loginButton;
-    IBOutlet UITextField *pwdtextfld;
-    IBOutlet UITextField *emailtxtfld;
-}
 
 @property (strong, nonatomic) IBOutlet UILabel *addresslabel;
 @property (strong, nonatomic) IBOutlet UILabel *loginlabel;
@@ -27,7 +21,8 @@
 @property (strong, nonatomic) IBOutlet UIButton *loginbtn;
 @property (strong, nonatomic) IBOutlet UITextField *emailtxtfld;
 @property (strong, nonatomic) IBOutlet UITextField *pwdtextfld;
-//@property(strong,nonatomic) IBOutlet UIButton *googleloginaction;
+@property (strong, nonatomic) IBOutlet UIButton *loginButton;
+
 @property (strong , nonatomic) IBOutlet FBSDKLoginButton *fbloginaction;
 @property (retain, nonatomic) IBOutlet GPPSignInButton *googleloginaction;
 
@@ -40,7 +35,5 @@
 
 -(BOOL)login_status;
 -(void)logout_status;
-
-- (void)setOAuthToken:(NSString *)token oauthVerifier:(NSString *)verfier;
 
 @end

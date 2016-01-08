@@ -10,6 +10,9 @@
 #import "Connectionmanager.h"
 #import "Header.h"
 #import "ProductViewController.h"
+#import "SharedPreferences.h"
+#import "NetworkManager.h"
+
 @interface VerificationViewController ()
 
 // 509181039153-i4mnrf976n999ornrh2eafeeg1cf4oka.apps.googleusercontent.com
@@ -22,6 +25,7 @@ NSDictionary *parsedObject;
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    
     NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
     NSObject * object = [prefs objectForKey:@"UserLoginIdSession"];
     self.userNameTxtFld.text = [object valueForKey:@"name"];
@@ -46,55 +50,20 @@ NSDictionary *parsedObject;
 
 - (IBAction)continueBtnAction:(id)sender {
     
-    if ([[ConnectionManager getSharedInstance] isConnectionAvailable])
-    {
-        dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-            //Background Thread
-            
-         
-            
-            NSString *urlString = [[NSString stringWithFormat:@"%@/social_login.php?name=%@&email=%@&image_path= &mobile=%@&source=iPhone&@&mac_addr=4545.7765.767",BaseUrl,self.userNameTxtFld.text,self.emailTxtFld.text,self.mobileTxtFld.text]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-            NSURL *url = [[NSURL alloc] initWithString:urlString];
-            
-            NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
-            
-            
-            [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
-             
-             {
-                 dispatch_async(dispatch_get_main_queue(), ^(void){
-                     //Run UI Updates
-                     if (data.length > 0)
-                     {
-                         
-                         
-                         parsedObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
-                         
-                         NSLog(@"parsedObject =%@",parsedObject);
-                         
-                         
-                         if ([[parsedObject valueForKey:@"status"]  isEqual: @"success"])
-                         {
-                            NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
-                             [user setObject:[parsedObject objectForKey:@"user_id"] forKey:@"userID"];
-                             ProductViewController *product = [[ProductViewController alloc]init];
-                             [self.navigationController pushViewController:product animated:YES];
-                         }
-                         else
-                         {
-                             UIAlertView  *alertView = [[UIAlertView alloc] initWithTitle:nil message:[parsedObject valueForKey:@"message"] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-                             [alertView show];
-                         }
-                     }
-                     
-                 });
-             }];
-        });
-        
-    }
+    [NetworkManager loginVerificationWithName:self.userNameTxtFld.text email:self.emailTxtFld.text andMobileNumber:self.mobileTxtFld.text withComplitionHandler:^(id result, NSError *err) {
+        if ([[result valueForKey:@"status"]  isEqual: @"success"])
+        {
+            NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
+            [user setObject:[result objectForKey:@"user_id"] forKey:@"userID"];
+            [self.navigationController popToRootViewControllerAnimated:YES];
+
+        }else{
+            [[SharedPreferences sharedInstance] showCommonAlertWithMessage:[result valueForKey:@"message"] withObject:self];
+        }
+    }];
 }
 
 - (IBAction)backBtnAction:(id)sender {
-
+    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 @end

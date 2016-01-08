@@ -9,6 +9,9 @@
 #import <UIKit/UIKit.h>
 
 @interface EditViewController : UIViewController
+
+- (id)initWithDict:(NSDictionary *)dict;
 - (IBAction)backBtn:(UIBarButtonItem *)sender;
+- (IBAction)updateProfile:(id)sender;
 
 @end

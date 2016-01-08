@@ -20,6 +20,9 @@
 #import "SignupViewController.h"
 #import "UIImageView+WebCache.h"
 #import "DSLCalendarView.h"
+#import "SharedPreferences.h"
+#import "NetworkManager.h"
+
 
 @interface ProductViewController ()  <DSLCalendarViewDelegate>{
 
@@ -56,18 +59,11 @@ NSURLConnection *connection;
 
 UIRefreshControl *refreshControl;
 
-
--(void)viewWillAppear:(BOOL)animated{
-    
-    
-}
-
 - (void)viewDidLoad {
+    
+    [super viewDidLoad];
+    
     [self.listtable setScrollEnabled:YES];
-    
-    //activityindicator.hidden = NO;
-    
-    
     self.listtable.backgroundColor =[UIColor blackColor];
     UIColor *color = [UIColor whiteColor];
     textfield.attributedPlaceholder =
@@ -75,13 +71,8 @@ UIRefreshControl *refreshControl;
      initWithString:@"Search Event"
      attributes:@{NSForegroundColorAttributeName:color}];
     
-    self.dataArray = [[NSMutableArray alloc]initWithObjects:@"Profile",
-    @"Setings",
-    @"My Bids",
-    @"Logout",
-    @"Auction", nil];
-    login_status =YES;
-    [super viewDidLoad];
+    self.dataArray = [[NSMutableArray alloc]initWithCapacity:0];
+    [self refereshDataArray];
     
     /**********[OWLERS LOADER WORK START]***********/
     self.loaderOwlersImage.hidden = NO;
@@ -100,11 +91,6 @@ UIRefreshControl *refreshControl;
     
     location_arr = [[NSMutableArray alloc]init];
     locationID = [[NSMutableArray alloc]init];
-//    [location_arr addObject:@"Delhi"];
-//    [location_arr addObject:@"Gurgaon"];
-//    [location_arr addObject:@"Bangalore"];
-//    [location_arr addObject:@"Pune"];
-//    [location_arr addObject:@"Mumbai"];
     
     self.tableView = [[UITableView alloc] init];
     self.tableView.frame = CGRectMake(-5, 65, 300, 170);
@@ -182,6 +168,21 @@ UIRefreshControl *refreshControl;
     });
     _sampleView.hidden=YES;
     
+}
+
+- (void)refereshDataArray{
+    [self.dataArray removeAllObjects];
+    
+    if ([[SharedPreferences sharedInstance] isLogin]) {
+        [self.dataArray addObject:@"Profile"];
+        [self.dataArray addObject:@"Setings"];
+        [self.dataArray addObject:@"My Bids"];
+        [self.dataArray addObject:@"Logout"];
+        [self.dataArray addObject:@"Auction"];
+    }else{
+        [self.dataArray addObject:@"Login"];
+        [self.dataArray addObject:@"Signup"];
+    }
 }
 
 
@@ -358,47 +359,22 @@ UIRefreshControl *refreshControl;
         
         scrllview.hidden=NO;
         self.listtable.frame = CGRectMake(self.listtable.frame.origin.x, 85, self.listtable.frame.size.width, self.listtable.frame.size.height);
-        
-        //citycheck = YES;
     }
-    
-    
-    
-    //    NSLog(@"Hello  !!");
-    //
-    //    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(-5, 65, 130, 300) style:UITableViewStylePlain];
-    //    [self.tableView setDataSource:self];
-    //    [self.tableView setDelegate:self];
-    //    [self.tableView setShowsVerticalScrollIndicator:NO];
-    //    self.tableView.translatesAutoresizingMaskIntoConstraints = NO;
-    //    self.tableView.rowHeight = UITableViewAutomaticDimension;
-    //    [self.view addSubview:self.tableView];
-    //    self.dataArray = [@[@""] mutableCopy];
-    //
 }
 /***************[AUCTION BUTTON HIDDEN]******************/
 - (IBAction)btnAction:(id)sender {
     
-    if (!login_status) {
-        
-    
-    
-    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"" message:@"Unable to auction without login" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Login", nil];
-    
-    [alert show];
-        return;
+    if ([[SharedPreferences sharedInstance] isLogin]) {
+        AuctionViewController *auction=[[AuctionViewController alloc]init];
+        [self.navigationController pushViewController:auction animated:YES];
+    }else{
+        [[SharedPreferences sharedInstance] showCommonAlertWithMessage:@"Unable to auction without login" withObject:self];
     }
     
-    AuctionViewController *auction=[[AuctionViewController alloc]init];
-    [self.navigationController pushViewController:auction animated:YES];
 }
 
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-
-
-
     if (buttonIndex==1) {
-        
         LoginViewController *login = [[LoginViewController alloc]init];
         [self.navigationController pushViewController:login animated:YES];
     }
@@ -412,33 +388,25 @@ UIRefreshControl *refreshControl;
     [self.tableView setShowsVerticalScrollIndicator:NO];
     self.tableView.translatesAutoresizingMaskIntoConstraints = NO;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
-    [self.view addSubview:self.tableView];
-    if (login_status) {
+    
+    if ([[SharedPreferences sharedInstance] isLogin]) {
         self.tableView.frame = CGRectMake(5, 63, 200, 250);
     }else
         self.tableView.frame = CGRectMake(5, 63, 200, 100);
+    
     if (menucheck) {
-        menucheck=NO;
-        self.tableView.hidden=YES;
+        menucheck= NO;
+        self.tableView.hidden = YES;
+    }else{
+        menucheck= YES;
+        self.tableView.hidden = NO;
     }
-    else{
-        menucheck=YES;
-        self.tableView.hidden=NO;
-    }
-    [self.tableView reloadData];
+    [self.view addSubview:self.tableView];
+    
 }
 
 -(void)loginStatus{
-    
-    if (!login_status) {
-        
-        // self.listtable.userInteractionEnabled  = NO;
-        
-    }else{
-    
-       //  self.listtable.userInteractionEnabled  = YES;
-    
-    }
+
 }
 
 //-(void)searchbarbutton:(UIButton *)sender
@@ -543,49 +511,31 @@ UIRefreshControl *refreshControl;
     return [recipes count];
 }
 
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSInteger lastSectionIndex = [tableView numberOfSections] - 1;
-    NSInteger lastRowIndex = [tableView numberOfRowsInSection:lastSectionIndex] - 1;
-    if ((indexPath.section == lastSectionIndex) && (indexPath.row == lastRowIndex)) {
-        // This is the last cell
-       // [self loadMore];
-    }
-}
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-
 {
-    
     if (tableView ==self.tableView) {
         
-                 if (indexPath.row ==0) {
-            
-            if (!login_status) {
+     if (indexPath.row ==0) {
+
+            if ([[SharedPreferences sharedInstance] isLogin]) {
+                ProfileViewController *profile=[[ProfileViewController alloc]init];
+                [self.navigationController pushViewController:profile animated:YES];
+            }else{
                 LoginViewController *profile =[[LoginViewController alloc]init];
                 [self.navigationController pushViewController:profile animated:YES];
-
-                return;
             }
-            ProfileViewController *profile=[[ProfileViewController alloc]init];
-            [self.navigationController pushViewController:profile animated:YES];
-            
+         
         }
         if (indexPath.row ==1) {
             
-            if (!login_status) {
-                SignupViewController *profile =[[SignupViewController alloc]init];
+            if ([[SharedPreferences sharedInstance] isLogin]) {
+                SettingViewController *setting =[[SettingViewController alloc]init];
+                [self.navigationController pushViewController:setting animated:YES];
+            }else{
+                LoginViewController *profile =[[LoginViewController alloc]init];
                 [self.navigationController pushViewController:profile animated:YES];
-                
-                return;
             }
-
-            
-            SettingViewController *setting =[[SettingViewController alloc]init];
-            [self.navigationController pushViewController:setting animated:YES];
         }
-//        if (indexPath.row ==2) {
-//            AuctionViewController *auction =[[AuctionViewController alloc]init];
-//            [self.navigationController pushViewController:auction animated:YES];
-//        }
         if (indexPath.row ==2) {
             MyBidsViewController *bids =[[MyBidsViewController alloc]init];
             [self.navigationController pushViewController:bids animated:YES];
@@ -597,18 +547,10 @@ UIRefreshControl *refreshControl;
             self.loginViewController = [[LoginViewController alloc] init];
             
             [self.loginViewController logout_status];
-            
-            
-            login_status = NO;
-            
             [self.dataArray removeAllObjects];
-            
             [self.dataArray addObject:@"Login"];
             [self.dataArray addObject:@"Signup"];
-            
             [self loginStatus];
-            
-        
         }
         self.tableView.hidden=YES;
     }
@@ -637,8 +579,6 @@ UIRefreshControl *refreshControl;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-    
     if (tableView ==self.tableView)
     {
         NSString *cellIdentifier = @"CustomCell";
@@ -650,17 +590,12 @@ UIRefreshControl *refreshControl;
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
         }
         
-        
-        int dataIndex = (int) indexPath.row % [self.dataArray count];
-        cell.textLabel.text = self.dataArray[dataIndex];
+//        int dataIndex = (int) indexPath.row % [self.dataArray count];
+        cell.textLabel.text = self.dataArray[indexPath.row];
         cell.textLabel.font = [UIFont systemFontOfSize:22];
         cell.textLabel.numberOfLines = 0;
         cell.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
-//        
-//        Recipe *recipe = [recipes objectAtIndex:indexPath.row];
-//        cell.nameLabel.text = recipe.name;
-//        cell.thumbnailImageView.image = [UIImage imageNamed:recipe.image];
-//        cell.prepTimeLabel.text = recipe.prepTime;
+
         
         UIView *view = [[UIView alloc]initWithFrame:CGRectMake(5, 50, 200, 1)];
         view.backgroundColor =[UIColor colorWithRed:241.0f/255 green:241.0f/255 blue:241.0f/255 alpha:0.35];
