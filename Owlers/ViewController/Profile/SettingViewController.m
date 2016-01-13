@@ -30,25 +30,6 @@ UIButton *button;
     button = [UIButton buttonWithType:UIButtonTypeCustom];
     [button setImage:[UIImage imageNamed:@"navbargoldbackarrow.png"] forState:UIControlStateNormal];
     [button setFrame:CGRectMake(-10, 5, 38, 38)];
-    [button addTarget:self action:@selector(button:) forControlEvents:UIControlEventTouchUpInside];
-    
-    
-    
-//    UIActivityViewController *controller = [[UIActivityViewController alloc] initWithActivityItems:objectsToShare applicationActivities:nil];
-//    [self presentViewController:controller animated:YES completion:nil];
-//    
-//    NSArray *excludedActivities = @[UIActivityTypePostToTwitter, UIActivityTypePostToFacebook,
-//                                    UIActivityTypePostToWeibo,
-//                                    UIActivityTypeMessage, UIActivityTypeMail,
-//                                    UIActivityTypePrint, UIActivityTypeCopyToPasteboard,
-//                                    UIActivityTypeAssignToContact, UIActivityTypeSaveToCameraRoll,
-//                                    UIActivityTypeAddToReadingList, UIActivityTypePostToFlickr,
-//                                    UIActivityTypePostToVimeo, UIActivityTypePostToTencentWeibo];
-//    controller.excludedActivityTypes = excludedActivities;
-//    
-//    [self presentViewController:controller animated:YES completion:nil];
-//
-//}
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -74,38 +55,11 @@ UIButton *button;
     
      NSURL *url = [NSURL URLWithString:@"jfkdljfkjf"];
     NSArray *objectsToShare = @[url];
-//    
    UIActivityViewController *controller = [[UIActivityViewController alloc] initWithActivityItems:objectsToShare applicationActivities:nil];
-//    
-//    // Exclude all activities except AirDrop.
-//    NSArray *excludedActivities = @[UIActivityTypePostToTwitter, UIActivityTypePostToFacebook,
-//                                    UIActivityTypePostToWeibo,
-//                                    UIActivityTypeMessage, UIActivityTypeMail,
-//                                    UIActivityTypePrint, UIActivityTypeCopyToPasteboard,
-//                                    UIActivityTypeAssignToContact, UIActivityTypeSaveToCameraRoll,
-//                                    UIActivityTypeAddToReadingList, UIActivityTypePostToFlickr,
-//                                    UIActivityTypePostToVimeo, UIActivityTypePostToTencentWeibo];
-//    controller.excludedActivityTypes = excludedActivities;
-//    
-//    // Present the controller
     [self presentViewController:controller animated:YES completion:nil];
-//
-    
-      }
-
-//- (NSURL *) fileToURL:(NSString*)filename
-//{
-//    NSArray *fileComponents = [filename componentsSeparatedByString:@"."];
-//    NSString *filePath = [[NSBundle mainBundle] pathForResource:[fileComponents objectAtIndex:0] ofType:[fileComponents objectAtIndex:1]];
-//    
-//    return [NSURL fileURLWithPath:filePath];
-//}
+    }
 
 - (IBAction)rateusbtnAction:(id)sender {
-    
-   
-    
-
 }
 
 - (IBAction)termsbtnAction:(id)sender {

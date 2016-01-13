@@ -25,8 +25,8 @@
 
 
 @interface ProductViewController ()  <DSLCalendarViewDelegate>{
-
-
+    
+    
     NSURLConnection *connection_json;
     
 }
@@ -97,7 +97,7 @@ UIRefreshControl *refreshControl;
     self.tableView.bounces=NO;
     self.tableView.delegate=self;
     self.tableView.bounces =NO;
-   
+    
     
     NSString *_urlstring =[NSString stringWithFormat:@"%@/list_events.php?location_id=1",BaseUrl];
     
@@ -144,7 +144,7 @@ UIRefreshControl *refreshControl;
     
     //city_btn.font = [UIFont fontWithName:@"" size:20];
     /*********[Table Refresh Control]************/
-   
+    
     
     refreshControl = [[UIRefreshControl alloc] init];
     refreshControl.backgroundColor = [UIColor blackColor] ;
@@ -160,7 +160,7 @@ UIRefreshControl *refreshControl;
     _sampleView= [[CalendarView alloc]initWithFrame:CGRectMake(0, 60, 320, 360)];
     _sampleView.delegate    = self;
     _sampleView.calendarDate = [NSDate date];
-   // _sampleView.backgroundColor = [UIColor blackColor];
+    // _sampleView.backgroundColor = [UIColor blackColor];
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.view addSubview:_sampleView];
@@ -202,7 +202,7 @@ UIRefreshControl *refreshControl;
 - (void)handleRefresh:(id)sender
 {
     NSLog(@"Hello Refreshing");
-   
+    
     NSString *_urlstring =[NSString stringWithFormat:@"%@/list_events.php?location_id=1",BaseUrl];
     
     NSURL *url=[[NSURL alloc]initWithString:_urlstring];
@@ -238,8 +238,8 @@ UIRefreshControl *refreshControl;
         temp_btn.layer.cornerRadius = 4.0f;
         temp_btn.backgroundColor = [UIColor darkGrayColor];
         
-       // [cell.label1 setText:[text uppercaseString]];
-       // temp_btn.font = [UIFont systemFontOfSize:13];
+        // [cell.label1 setText:[text uppercaseString]];
+        // temp_btn.font = [UIFont systemFontOfSize:13];
         [temp_btn.titleLabel setFont:[UIFont fontWithName:@"GothamBook-1.otf" size:12]];
         NSString *textCaps;
         textCaps = [[location_arr objectAtIndex:i] uppercaseString];
@@ -272,13 +272,13 @@ UIRefreshControl *refreshControl;
     
     /**********[OWLERS LOADER WORK START]***********/
     //self.loaderOwlersImage.hidden = NO;
-//    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
-//    animation.toValue = [NSNumber numberWithDouble:M_PI_2];
-//    animation.duration = 0.4f;
-//    animation.cumulative = YES;
-//    animation.repeatCount = HUGE_VALF;
-//    [self.loaderOwlersImage.layer addAnimation:animation forKey:@"activityIndicatorAnimation"];
-//    /**********[OWLERS LOADER WORK END]***********/
+    //    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
+    //    animation.toValue = [NSNumber numberWithDouble:M_PI_2];
+    //    animation.duration = 0.4f;
+    //    animation.cumulative = YES;
+    //    animation.repeatCount = HUGE_VALF;
+    //    [self.loaderOwlersImage.layer addAnimation:animation forKey:@"activityIndicatorAnimation"];
+    //    /**********[OWLERS LOADER WORK END]***********/
     
     
     [connection_jso start];
@@ -313,43 +313,12 @@ UIRefreshControl *refreshControl;
         NSURLRequest *request=[[NSURLRequest alloc]initWithURL:url];
         NSURLConnection *connection_jso=[[NSURLConnection alloc]initWithRequest:request delegate:self];
         [connection_jso start];
-    
+        
     }else{
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Search cannot be empty" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:NULL, nil];
-        [alertView show];
+        
+        [[SharedPreferences sharedInstance] showCommonAlertWithMessage:@"Search cannot be empty" withObject:self];
     }
 }
-
-- (void)downloadImageWithURL:(NSURL *)url completionBlock:(void (^)(BOOL succeeded, UIImage *image))completionBlock
-
-{
-    
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    
-    [NSURLConnection sendAsynchronousRequest:request
-     
-                                       queue:[NSOperationQueue mainQueue]
-     
-                           completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-                               
-                               if ( !error )
-                                   
-                               {
-                                   
-                                   UIImage *image = [[UIImage alloc] initWithData:data];
-                                   
-                                   completionBlock(YES,image);
-                                   
-                               } else{
-                                   
-                                   completionBlock(NO,nil);
-                                   
-                               }
-                               
-                           }];
-    
-}
-
 
 -(IBAction)cityBtn:(id)sender{
     
@@ -401,13 +370,13 @@ UIRefreshControl *refreshControl;
         self.tableView.frame = CGRectMake(5, 63, 200, 100);
     self.tableView.hidden = !self.tableView.hidden;
     
-//    if (menucheck) {
-//        menucheck= NO;
-//        self.tableView.hidden = YES;
-//    }else{
-//        menucheck= YES;
-//        self.tableView.hidden = NO;
-//    }
+    //    if (menucheck) {
+    //        menucheck= NO;
+    //        self.tableView.hidden = YES;
+    //    }else{
+    //        menucheck= YES;
+    //        self.tableView.hidden = NO;
+    //    }
     [self.tableView reloadData];
     
 }
@@ -440,14 +409,14 @@ UIRefreshControl *refreshControl;
         NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:locationData options:NSJSONReadingMutableLeaves error:nil];
         
         NSArray *temparr = [dic objectForKey:@"Locations"];
-      //  NSLog(@"Location array : %@",temparr);
+        //  NSLog(@"Location array : %@",temparr);
         
         
         [location_arr removeAllObjects];
         [locationID removeAllObjects];
-      
         
-       
+        
+        
         for (NSDictionary *dic in temparr) {
             
             [location_arr addObject:[dic objectForKey:@"location_name"]];
@@ -486,18 +455,16 @@ UIRefreshControl *refreshControl;
 {
     if (tableView ==self.tableView) {
         
-     if (indexPath.row ==0) {
-
+        if (indexPath.row == 0) {
+            
             if ([[SharedPreferences sharedInstance] isLogin]) {
                 ProfileViewController *profile=[[ProfileViewController alloc]init];
                 [self.navigationController pushViewController:profile animated:YES];
             }else{
                 LoginViewController *profile =[[LoginViewController alloc]init];
                 [self.navigationController pushViewController:profile animated:YES];
-            }
-         
-        }
-        if (indexPath.row ==1) {
+            }            
+        }else if (indexPath.row == 1) {
             
             if ([[SharedPreferences sharedInstance] isLogin]) {
                 SettingViewController *setting =[[SettingViewController alloc]init];
@@ -506,30 +473,25 @@ UIRefreshControl *refreshControl;
                 LoginViewController *profile =[[LoginViewController alloc]init];
                 [self.navigationController pushViewController:profile animated:YES];
             }
-        }
-        if (indexPath.row ==2) {
+        }else if (indexPath.row == 2) {
             MyBidsViewController *bids =[[MyBidsViewController alloc]init];
             [self.navigationController pushViewController:bids animated:YES];
             
-        }
-        if (indexPath.row == 3) {
+        }else if (indexPath.row == 3) {
             [[SharedPreferences sharedInstance] logoutUser];
             [self refereshDataArray];
+        }else if (indexPath.row == 4) {
+            AuctionViewController *auction=[[AuctionViewController alloc]init];
+            [self.navigationController pushViewController:auction animated:YES];
         }
         self.tableView.hidden=YES;
     }
-
+    
     else if (tableView ==self.listtable)
     {
-        
         OwlersViewController *owlers=[[OwlersViewController alloc]init];
-        
         [owlers setEvent_id:[[[serverDataDictionary objectForKey:@"items"]objectAtIndex:indexPath.row] objectForKey:@"event_id"]];
-        
-        
-        
         [self.navigationController pushViewController:owlers animated:YES];
-        
     }
 }
 
@@ -540,8 +502,8 @@ UIRefreshControl *refreshControl;
     {
         NSString *cellIdentifier = @"CustomCell";
         UITableViewCell *cell = (UITableViewCell *)[tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-      
-
+        
+        
         if (cell == nil)
         {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
@@ -551,13 +513,13 @@ UIRefreshControl *refreshControl;
         cell.textLabel.font = [UIFont systemFontOfSize:22];
         cell.textLabel.numberOfLines = 0;
         cell.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
-
+        
         
         UIView *view = [[UIView alloc]initWithFrame:CGRectMake(5, 50, 200, 1)];
         view.backgroundColor =[UIColor colorWithRed:241.0f/255 green:241.0f/255 blue:241.0f/255 alpha:0.35];
         [cell addSubview:view];
         
-       
+        
         self.tableView.separatorColor = [UIColor clearColor];
         if (indexPath.row==0) {
             cell.backgroundColor= [UIColor colorWithRed:48.0f/255 green:48.0f/255 blue:48.0f/255 alpha:1];
@@ -583,21 +545,17 @@ UIRefreshControl *refreshControl;
         return cell;
     }
     
-    
-    
-    
     static NSString *cellId = @"Cell";
     CustomCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
-	
+    
     if (cell == nil)
     {
         NSArray *nib = [[NSBundle mainBundle] loadNibNamed:@"CustomCell" owner:self options:nil];
-        
         cell =[nib objectAtIndex:0];
     }
     
     self.listtable.separatorStyle = UITableViewCellSeparatorStyleNone;
-
+    
     NSString *text = [[[serverDataDictionary objectForKey:@"items"]objectAtIndex:indexPath.row] objectForKey:@"event_name"];
     [cell.label1 setText:[text uppercaseString]];
     cell.label2.text = [[[serverDataDictionary objectForKey:@"items"]objectAtIndex:indexPath.row] objectForKey:@"venue"];
@@ -608,7 +566,7 @@ UIRefreshControl *refreshControl;
     
     [cell.cellBackgroundImage sd_setImageWithURL:[NSURL URLWithString:temp_img]
                                 placeholderImage:[UIImage imageNamed:@"new_background_ullu.png"]];
-    //cell.cellBackgroundImage .clipsToBounds = YES;
+    
     cell.cellBackgroundImage = [[UIImageView alloc]initWithFrame:CGRectMake(0, 50, cell.frame.size.width, 202)];
     cell.selectionStyle = UITableViewCellSelectionStyleGray;
     self.loaderOwlersImage.hidden = YES;
@@ -623,21 +581,7 @@ UIRefreshControl *refreshControl;
 }
 
 
-
-#pragma tableview refresh
-//- (void)reloadData
-//{
-//    [self.tableView reloadData];
-//}
-
-
-
-
-
-
 /* for table 11111111111111*/
-
-
 -(void) showAndEnableRightNavigationItem
 {
     [self.navigationItem.rightBarButtonItem setTintColor:[UIColor blackColor]];
@@ -688,36 +632,6 @@ UIRefreshControl *refreshControl;
     return YES;
     
 }
-
-#pragma mark private methods
-
-
-/*
--(void)locationSearching:(NSString*)search_txt{
-    
-    
-    NSPredicate *predicate=[NSPredicate predicateWithFormat:@"self.address contains[cd] %@",search_txt];
-    arr_searching=[arr_slapsall filteredArrayUsingPredicate:predicate ];
-    for (SlapsList *sl in arr_slapsall) {
-        NSLog(@"---%@",sl.address);
-    }
-    if (arr_searching.count>0)
-    {
-        isSlapSearching=YES;
-        [table_location reloadData];
-    }else{
-        if ([search_location.text isEqualToString:@""]) {
-            isSlapSearching=NO;
-        }
-        isSlapSearching=YES;
-        [table_location reloadData];
-        
-        
-    }
-    
-}
-
- */
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -783,9 +697,6 @@ UIRefreshControl *refreshControl;
             
             month = @"December";
         }
-        
-        //[btn_calender setTitle:[NSString stringWithFormat:@"%@ %ld",month,range.startDay.year] forState:UIControlStateNormal];
-        
     }
     else {
         NSLog( @"No selection" );
@@ -835,12 +746,12 @@ UIRefreshControl *refreshControl;
     if (!_sampleView.hidden) {
         _sampleView.hidden = YES;
         self.listtable.frame = CGRectMake(self.listtable.frame.origin.x, 62, self.listtable.frame.size.width, self.listtable.frame.size.height);
-
+        
     }
     else{
         _sampleView.hidden = NO;
         self.listtable.frame = CGRectMake(self.listtable.frame.origin.x, 350, self.listtable.frame.size.width, self.listtable.frame.size.height);
-
+        
     }
     
 }
@@ -849,7 +760,6 @@ UIRefreshControl *refreshControl;
     NSPredicate *resultPredicate = [NSPredicate predicateWithFormat:@"name contains[c] %@", searchText];
     searchResults = [recipes filteredArrayUsingPredicate:resultPredicate];
 }
-
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"showRecipeDetail"]) {
@@ -862,8 +772,6 @@ UIRefreshControl *refreshControl;
             indexPath = [self.tableView indexPathForSelectedRow];
             recipes = [recipes objectAtIndex:indexPath.row];
         }
-        
-        OwlersViewController *destViewController = segue.destinationViewController;
     }
 }
 -(BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString

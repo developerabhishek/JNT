@@ -12,9 +12,9 @@
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import "ProductViewController.h"
-//#import "AFHTTPRequestOperationManager.h"
 #import "SVProgressHUD.h"
-//#import <FacebookSDK/FacebookSDK.h>
+#import "SharedPreferences.h"
+#import "NetworkManager.h"
 
 @interface SignupViewController ()
 @property (nonatomic, weak) IBOutlet UIButton *continueBtn;
@@ -77,14 +77,11 @@ NSDictionary *parsedObject;
     
         if (message.length != 0)
         {
-            UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-            [alertView show];
+            [[SharedPreferences sharedInstance] showCommonAlertWithMessage:message withObject:self];
         }
         else
         {
             [self performSelector:@selector(signupInapplication) withObject:nil];
-            
-           // [self webServicePlans];
         }
     
     
@@ -123,9 +120,7 @@ NSDictionary *parsedObject;
                          
                          if ([[parsedObject valueForKey:@"status"]  isEqual: @"success"])
                          {
-                             UIAlertView  *alertView = [[UIAlertView alloc] initWithTitle:nil message:[parsedObject valueForKey:@"message"] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-                             [alertView show];
-
+                             [[SharedPreferences sharedInstance] showCommonAlertWithMessage:[parsedObject valueForKey:@"message"] withObject:self];
                              NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
                              [user setObject:[parsedObject objectForKey:@"user_id"] forKey:@"userID"];
                              ProductViewController *product = [[ProductViewController alloc]init];
@@ -133,8 +128,7 @@ NSDictionary *parsedObject;
                          }
                          else
                          {
-                             UIAlertView  *alertView = [[UIAlertView alloc] initWithTitle:nil message:[parsedObject valueForKey:@"message"] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-                             [alertView show];
+                             [[SharedPreferences sharedInstance] showCommonAlertWithMessage:[parsedObject valueForKey:@"message"] withObject:self];
                          }
                      }
                      
@@ -200,9 +194,8 @@ NSDictionary *parsedObject;
              
              
          }else{
-             // [SVProgressHUD dismiss];
-             UIAlertView *alertView=[[UIAlertView alloc] initWithTitle:@"Could not connect to server" message:[error localizedDescription] delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
-             [alertView show];
+
+             [[SharedPreferences sharedInstance] showCommonAlertWithMessage:@"Could not connect to server" withObject:self];             
          }
      }];
 }

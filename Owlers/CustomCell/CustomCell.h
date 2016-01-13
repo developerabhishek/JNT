@@ -9,9 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface CustomCell : UITableViewCell
-{
-    IBOutlet UILabel *label1;
-}
 
 @property (strong, nonatomic) IBOutlet UIImageView *cellBackgroundImage;
 @property (strong, nonatomic) IBOutlet UIImageView *overLayImage;

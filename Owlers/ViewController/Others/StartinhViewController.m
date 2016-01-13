@@ -179,7 +179,5 @@ int currentIndex = 0;
     else{
         [[SharedPreferences sharedInstance] showCommonAlertWithMessage:@"The network connection is not available" withObject:self];
     }
-    
-
 }
 @end

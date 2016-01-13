@@ -91,11 +91,6 @@
 
 
 - (IBAction)backBtnAction:(id)sender {
-    
-    LoginViewController *login=[[LoginViewController alloc]initWithNibName:@"LoginViewController" bundle:nil];
-    
-    UINavigationController *navcontroller =self.navigationController;
-    [navcontroller popViewControllerAnimated:YES];
-    
+    [self.navigationController popViewControllerAnimated:YES];
 }
 @end

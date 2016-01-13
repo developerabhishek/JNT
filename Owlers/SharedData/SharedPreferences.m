@@ -60,9 +60,7 @@ static SharedPreferences *sharedInstance;
     [defauls synchronize];
 }
 
-
-
-- (NSString *)getUserID{    
+- (NSString *)getUserID{
     NSUserDefaults *defauls = [NSUserDefaults standardUserDefaults];
     return [defauls objectForKey:@"userID"];
 }

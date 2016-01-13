@@ -32,9 +32,8 @@ NSString *UserId;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    UserId= [defaults objectForKey:@"userID"];
     
+    UserId= [[SharedPreferences sharedInstance] getUserID];
     self.title = @"Change Password";
     [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
     

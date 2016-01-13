@@ -57,8 +57,8 @@ bool male_status = YES,female_status = YES,couple_status = YES;
         // Set the direction mode in the launchOptions dictionary
         [MKMapItem openMapsWithItems:@[currentLocationMapItem, mapItem]
                        launchOptions:launchOptions];
-       
-     
+        
+        
     }
     //iOS 4/5:
     else
@@ -66,7 +66,7 @@ bool male_status = YES,female_status = YES,couple_status = YES;
         NSLog(@"33   3333333");
         NSString *mapsURL = [NSString stringWithFormat:@"http://maps.google.com/maps?q=%@", [address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
         NSLog(@"my url =%@",mapsURL);
-}
+    }
 }
 -(void)offermethodcall{
     if (array_offers.count>0) {
@@ -94,9 +94,9 @@ bool male_status = YES,female_status = YES,couple_status = YES;
             
             UILabel *label = [[ UILabel alloc] initWithFrame:CGRectMake(40, 15, self.view.frame.size.width-50, 20)];
             
-           // NSDictionary *tempdic = [array_offers objectAtIndex:i];
+            // NSDictionary *tempdic = [array_offers objectAtIndex:i];
             
-           // label.text = [tempdic objectForKey:@"title"];
+            // label.text = [tempdic objectForKey:@"title"];
             label.textColor = [UIColor blackColor];
             label.font = [UIFont systemFontOfSize:15];
             [viewInside addSubview:image];
@@ -135,10 +135,10 @@ bool male_status = YES,female_status = YES,couple_status = YES;
     
     /*****[TAP RECOGNIZER GESTURE]****/
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(viewTransparentHidden:)];
-     UITapGestureRecognizer *tapping = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(viewtrans2Hidden:)];
+    UITapGestureRecognizer *tapping = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(viewtrans2Hidden:)];
     [view_trans2 addGestureRecognizer:tapping];
     [view_transparent addGestureRecognizer:tap];
-  
+    
     
     view_rsvp.layer.borderColor = [UIColor colorWithRed:252.0f/255 green:180.0f/255 blue:0.0f/255 alpha:1].CGColor;
     offer_view.layer.borderColor =[UIColor colorWithRed:252.0f/255 green:180.0f/255 blue:0.0f/255 alpha:1].CGColor;
@@ -152,7 +152,7 @@ bool male_status = YES,female_status = YES,couple_status = YES;
     txt_male.backgroundColor = [UIColor whiteColor];
     
     
-   mapview.delegate = self;  
+    mapview.delegate = self;
     varcouple =0;
     varfemale = 0;
     varmale = 0;
@@ -163,7 +163,7 @@ bool male_status = YES,female_status = YES,couple_status = YES;
     offer_view.hidden=YES;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     UserId= [defaults objectForKey:@"userID"];
-       
+    
     scrollview.delegate=self;
     [scrollview setScrollEnabled:YES];
     [scrollview setContentSize:CGSizeMake(320,690)];
@@ -179,11 +179,11 @@ bool male_status = YES,female_status = YES,couple_status = YES;
     NSURLConnection *connection=[[NSURLConnection alloc]initWithRequest:request delegate:self];
     [connection start];
     firstLaunch=YES;
-
+    
     
     NSTimer *_timer;
     _timer = [NSTimer scheduledTimerWithTimeInterval:3 target:self selector:@selector(timer) userInfo:nil repeats:YES];
-
+    
     
     
     
@@ -198,8 +198,8 @@ bool male_status = YES,female_status = YES,couple_status = YES;
     [activity setColor:[UIColor colorWithRed:0.6 green:0.8 blue:1.0 alpha:1.0]];
     
     /*********[GOOGLE MAP VIEW]**********/
-//    mapview = [[MKMapView alloc] initWithFrame:self.view.frame];
-//    [self.view addSubview:mapview];
+    //    mapview = [[MKMapView alloc] initWithFrame:self.view.frame];
+    //    [self.view addSubview:mapview];
     
     
     
@@ -211,16 +211,13 @@ bool male_status = YES,female_status = YES,couple_status = YES;
     
     
     
-   }
+}
 
 
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
-    NSLog(@"didFailWithError: %@", error);
-    UIAlertView *errorAlert = [[UIAlertView alloc]
-                               initWithTitle:@"Error" message:@"Failed to Get Your Location" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    [errorAlert show];
+    [[SharedPreferences sharedInstance] showCommonAlertWithMessage:@"Failed to Get Your Location" withObject:self];
 }
 
 
@@ -228,8 +225,8 @@ bool male_status = YES,female_status = YES,couple_status = YES;
 {
     NSLog(@"didUpdateToLocation: %@", newLocation);
     CLLocation *currentLocation = newLocation;
-   
-
+    
+    
     if (currentLocation != nil) {
         locationmanager = [NSString stringWithFormat:@"%.8f", currentLocation.coordinate.longitude];
         locationmanager = [NSString stringWithFormat:@"%.8f", currentLocation.coordinate.latitude];
@@ -242,22 +239,22 @@ bool male_status = YES,female_status = YES,couple_status = YES;
         if (error == nil && [placemarks count] > 0) {
             placemark = [placemarks lastObject];
             locationmanager = [NSString stringWithFormat:@"%@ %@\n%@ %@\n%@\n%@",
-                                 placemark.subThoroughfare, placemark.thoroughfare,
-                                 placemark.postalCode, placemark.locality,
-                                 placemark.administrativeArea,
-                                 placemark.country];
+                               placemark.subThoroughfare, placemark.thoroughfare,
+                               placemark.postalCode, placemark.locality,
+                               placemark.administrativeArea,
+                               placemark.country];
         } else {
             NSLog(@"%@", error.debugDescription);
         }
     } ];
-
+    
 }
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
 {
     
     MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(userLocation.coordinate, 800, 800);
     [self.mapview setRegion:[self.mapview regionThatFits:region] animated:YES];
-       [self.mapview setRegion:[self.mapview regionThatFits:region] animated:YES];
+    [self.mapview setRegion:[self.mapview regionThatFits:region] animated:YES];
     
     
     //[mapView setCenterCoordinate:mapView.userLocation.location.coordinate animated:YES];
@@ -268,15 +265,15 @@ bool male_status = YES,female_status = YES,couple_status = YES;
     point.title = @"Where am I?";
     point.subtitle = @"I'm here!!!";
     [self.mapview addAnnotation:point];
-
+    
 }
 - (void)mapView:(MKMapView *)mv didAddAnnotationViews:(NSArray *)views {
     MKCoordinateRegion region;
     region = MKCoordinateRegionMakeWithDistance(locationmanager.location.coordinate,1000,1000);
     
     CLLocationCoordinate2D centre = [mv centerCoordinate];
-   
-     if (firstLaunch) {
+    
+    if (firstLaunch) {
         region = MKCoordinateRegionMakeWithDistance(locationmanager.location.coordinate,1000,1000);
         firstLaunch=NO;
     }else {
@@ -285,7 +282,7 @@ bool male_status = YES,female_status = YES,couple_status = YES;
     }
     //Set the visible region of the map.
     [mv setRegion:region animated:YES];
-
+    
     [mv setRegion:region animated:YES];
     
 }
@@ -318,7 +315,7 @@ bool male_status = YES,female_status = YES,couple_status = YES;
     //Write out the data to the console.
     NSLog(@"Google Data: %@", places);
     [self plotPositions:places];
-
+    
 }
 -(void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated {
     //Get the east and west points on the map so you can calculate the distance (zoom level) of the current map view.
@@ -326,7 +323,7 @@ bool male_status = YES,female_status = YES,couple_status = YES;
     MKMapPoint eastMapPoint = MKMapPointMake(MKMapRectGetMinX(mRect), MKMapRectGetMidY(mRect));
     MKMapPoint westMapPoint = MKMapPointMake(MKMapRectGetMaxX(mRect), MKMapRectGetMidY(mRect));
     self.annotation.coordinate = mapview.centerCoordinate;
-
+    
     //Set your current distance instance variable.
     currenDist = MKMetersBetweenMapPoints(eastMapPoint, westMapPoint);
     
@@ -355,8 +352,8 @@ bool male_status = YES,female_status = YES,couple_status = YES;
         // Create a special variable to hold this coordinate info.
         CLLocationCoordinate2D placeCoord;
         // Set the lat and long.
-//        placeCoord.latitude=[[loc objectForKey:@"lat"] doubleValue];
-//        placeCoord.longitude=[[loc objectForKey:@"lng"] doubleValue];
+        //        placeCoord.latitude=[[loc objectForKey:@"lat"] doubleValue];
+        //        placeCoord.longitude=[[loc objectForKey:@"lng"] doubleValue];
         
         placeCoord.latitude=[[loc objectForKey:@"lat"] doubleValue];
         placeCoord.longitude=[[loc objectForKey:@"lng"] doubleValue];
@@ -385,13 +382,13 @@ bool male_status = YES,female_status = YES,couple_status = YES;
 }
 
 -(void)viewWillLayoutSubviews{
-
     
-//    for (int i =0; <#condition#>; <#increment#>) {
-//        <#statements#>
-//    }
-//
-//UIView *view = [UIView alloc] initWithFrame:CGRectMake(, <#CGFloat y#>, <#CGFloat width#>, <#CGFloat height#>)
+    
+    //    for (int i =0; <#condition#>; <#increment#>) {
+    //        <#statements#>
+    //    }
+    //
+    //UIView *view = [UIView alloc] initWithFrame:CGRectMake(, <#CGFloat y#>, <#CGFloat width#>, <#CGFloat height#>)
     
 }
 -(void)viewtrans2Hidden:(UITapGestureRecognizer*)tapgesture{
@@ -407,12 +404,12 @@ bool male_status = YES,female_status = YES,couple_status = YES;
 -(void)viewTransparentHidden:(UITapGestureRecognizer*)tapgesture{
     
     
-
+    
     view_transparent.hidden = YES;
     
-        view_rsvp.hidden = YES;
+    view_rsvp.hidden = YES;
     
-
+    
 }
 
 #pragma mark IBAction methods
@@ -607,7 +604,7 @@ bool male_status = YES,female_status = YES,couple_status = YES;
             }else{
                 [pay_now setText:[NSString stringWithFormat:@"%d",total_prc]];
             }
-
+            
             /***************************[PRICE CALCULATION END]*****************************/
         }else if([lb_couple.text intValue] > 0 && [lb_female.text intValue] > 0){
             NSString *get_female_counts = lb_female.text;
@@ -636,7 +633,7 @@ bool male_status = YES,female_status = YES,couple_status = YES;
             }else{
                 [pay_now setText:[NSString stringWithFormat:@"%d",total_prc]];
             }
-
+            
             /***************************[PRICE CALCULATION END]*****************************/
         }else if([lb_couple.text intValue] == 0 && [lb_female.text intValue] > 0){
             NSString *get_female_counts = lb_female.text;
@@ -729,15 +726,8 @@ bool male_status = YES,female_status = YES,couple_status = YES;
                      if (data.length > 0)
                      {
                          NSDictionary *parsedObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
-                         
-                         NSLog(@"parsedObject =%@",parsedObject);
-                         
                          NSString* message = [parsedObject  objectForKey:@"message"];
-                         NSLog(@"message   =%@",message);
-
-                         UIAlertView  *alertView = [[UIAlertView alloc] initWithTitle:nil message:@"Event successfully booked" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-                         [alertView show];
-                         
+                        [[SharedPreferences sharedInstance] showCommonAlertWithMessage:message withObject:self];
                      }
                      
                  });
@@ -745,7 +735,7 @@ bool male_status = YES,female_status = YES,couple_status = YES;
         });
     }
     
-
+    
     
 }
 
@@ -766,15 +756,8 @@ bool male_status = YES,female_status = YES,couple_status = YES;
                      if (data.length > 0)
                      {
                          NSDictionary *parsedObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
-                         
-                         NSLog(@"parsedObject =%@",parsedObject);
-                         
                          NSString* message = [parsedObject  objectForKey:@"message"];
-                         NSLog(@"message   =%@",message);
-                         
-                         UIAlertView  *alertView = [[UIAlertView alloc] initWithTitle:nil message:@"Event successfully booked" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-                         [alertView show];
-                         
+                         [[SharedPreferences sharedInstance] showCommonAlertWithMessage:message withObject:self];
                      }
                      
                  });
@@ -818,6 +801,7 @@ bool male_status = YES,female_status = YES,couple_status = YES;
         temp_btn.clipsToBounds = YES;
         NSString *temp_img = @"http://owlers.com/event_images/";
         temp_img = [temp_img stringByAppendingString:[array_slider objectAtIndex:i ]];
+        
         [self downloadImageWithURL:[NSURL URLWithString:temp_img] completionBlock:^(BOOL succeeded, UIImage *image) {
             if (succeeded) {
                 temp_btn.image = image;
@@ -830,18 +814,11 @@ bool male_status = YES,female_status = YES,couple_status = YES;
     scroll_offer.scrollEnabled=YES;
     [scroll_offer setContentSize:CGSizeMake(self.view.frame.size.width*array_offers.count, 0)];
     
-    
-//    scroll_offer.backgroundColor = [UIColor yellowColor];
-//    scroll_offer.frame = CGRectMake(10, scroll_offer.frame.origin.y, 320*6, 50);
-//    scroll_offer.scrollEnabled = YES;
-//    scroll_offer.pagingEnabled=NO;
-    //scroll_offer.contentSize = CGSizeMake(420*3, 0);
-    
     if (array_offers.count==0) {
         return;
     }
     for (int i=0; i<array_offers.count; i++) {
-
+        
         UIView *view = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width, 0, self.view.frame.size.width, 50)];
         UIButton *btn_call = [[UIButton alloc]initWithFrame:CGRectMake(10, 10, 30, 15)];
         
@@ -853,16 +830,6 @@ bool male_status = YES,female_status = YES,couple_status = YES;
         
         NSLog(@"offer Label :%@",[[array_offers objectAtIndex:i]objectForKey:@"title"]);
         
-        
-        
-        
-//        NSLog([NSString stringWithFormat:@"value of i :%d",0]);
-        
-      //  _offerLabel.text =[NSString stringWithFormat:@"%@",[array_offers objectAtIndex:i]objectForKey:@"title"];
-      // _offerLabel.text = [[array_offers objectAtIndex:i] objectForKey:@"title"];
-//        
-//          _offerLabel.text =[NSString stringWithFormat:@"%@",[[[[[serverdict objectForKey:@"events"] objectAtIndex:0]objectForKey:@"offers"]objectAtIndex:0]objectForKey:@"title"]];
-//        
         
         UILabel *label = [[ UILabel alloc] initWithFrame:CGRectMake(15, 5, self.view.frame.size.width, 20)];
         
@@ -876,20 +843,7 @@ bool male_status = YES,female_status = YES,couple_status = YES;
         [view addSubview:btn_call];
         [view addSubview:viewInside];
         [scroll_offer addSubview:view];
-        
-      //  [self.view addSubview:scroll_offer];
-      
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }
 
 - (void)downloadImageWithURL:(NSURL *)url completionBlock:(void (^)(BOOL succeeded, UIImage *image))completionBlock
@@ -918,7 +872,7 @@ bool male_status = YES,female_status = YES,couple_status = YES;
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
     
-   
+    
     serverdata = [[NSMutableData alloc]init];
 }
 
@@ -935,28 +889,28 @@ bool male_status = YES,female_status = YES,couple_status = YES;
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
     
-//    self.activity.hidden =YES;
+    //    self.activity.hidden =YES;
     [self.activity stopAnimating];
     serverdict = [NSJSONSerialization JSONObjectWithData:serverdata options:NSJSONReadingMutableLeaves error:nil];
     NSLog(@"serverData =%@",serverdict);
     
-   
+    
     array_slider = [[[serverdict objectForKey:@"events"] objectAtIndex:0] objectForKey:@"slider_images"];
- //[self viewDidLayoutSubviews];
+    //[self viewDidLayoutSubviews];
     //[self offermethodcall];
-//    
-//    NSArray *temparr = [serverdict objectForKey:@"events"] ;
-//    NSDictionary *tempdic = [temparr objectAtIndex:0];
-//    NSArray *temp2 = [[tempdic objectForKey:@"offers"] objectAtIndex:0];
+    //
+    //    NSArray *temparr = [serverdict objectForKey:@"events"] ;
+    //    NSDictionary *tempdic = [temparr objectAtIndex:0];
+    //    NSArray *temp2 = [[tempdic objectForKey:@"offers"] objectAtIndex:0];
     
     NSArray *offer_slider_array = [[[serverdict objectForKey:@"events"]objectAtIndex:0]objectForKey:@"offers"];
     
     
     NSLog(@"OFFERS DATA : %@",offer_slider_array);
-   
+    
     array_offers = [offer_slider_array copy];
     [self viewDidLayoutSubviews];
-   // [self offermethodcall];
+    // [self offermethodcall];
     
     /******************************[TO BE COPIED START]**********************************/
     if([[[serverdict objectForKey:@"events"] objectAtIndex:0] objectForKey:@"discounts"]) {
@@ -965,15 +919,15 @@ bool male_status = YES,female_status = YES,couple_status = YES;
         discount_value = [[local_array objectAtIndex:0] objectForKey:@"value"];
         NSString *discount = [[local_array objectAtIndex:0] objectForKey:@"title"];
         NSString *dis_total = [NSString stringWithFormat:@"PAY  NOW ( %@ )",discount];
-
-        [continue_pay_action setTitle:dis_total forState:nil];
+        
+        [continue_pay_action setTitle:dis_total forState:UIControlStateNormal];
         
     }
     else {
         NSLog(@"Discount does not exists");
     }
     
-        NSString *status_check = [NSString stringWithFormat:@"%@",[[[serverdict objectForKey:@"events"] objectAtIndex:0] objectForKey:@"entry_exists_for"]];
+    NSString *status_check = [NSString stringWithFormat:@"%@",[[[serverdict objectForKey:@"events"] objectAtIndex:0] objectForKey:@"entry_exists_for"]];
     if([status_check  isEqual: @""]){}else{
         NSArray* foo = [status_check componentsSeparatedByString: @","];
         
@@ -1008,7 +962,7 @@ bool male_status = YES,female_status = YES,couple_status = YES;
     
     _imageLabel1.text=[NSString stringWithFormat:@"%@",[[[serverdict objectForKey:@"events"] objectAtIndex:0]objectForKey:@"event_name"]];
     _imagelabel2.text=[NSString stringWithFormat:@"%@",[[[serverdict objectForKey:@"events"] objectAtIndex:0]objectForKey:@"venue"]];
-//    _offerLabel.text =[NSString stringWithFormat:@"%@",[[[[[serverdict objectForKey:@"events"] objectAtIndex:0]objectForKey:@"offers"]objectAtIndex:0]objectForKey:@"title"]];
+    //    _offerLabel.text =[NSString stringWithFormat:@"%@",[[[[[serverdict objectForKey:@"events"] objectAtIndex:0]objectForKey:@"offers"]objectAtIndex:0]objectForKey:@"title"]];
     
     lab_TopMale.text=[NSString stringWithFormat:@"%@", [[[serverdict objectForKey:@"events"] objectAtIndex:0]objectForKey:@"ev_price_male"]];
     lab_TopFeMale.text=[NSString stringWithFormat:@"%@", [[[serverdict objectForKey:@"events"] objectAtIndex:0]objectForKey:@"ev_price_female"]];
@@ -1033,39 +987,31 @@ bool male_status = YES,female_status = YES,couple_status = YES;
             str_temp_lat=[latDest1 floatValue];
             str_temp_long=[lngDest1 floatValue];
         }
-        NSString *temp_address =@"http://maps.google.com/maps/api/geocode/json?address=%22+";
-
-            MKPointAnnotation *annotation= [[MKPointAnnotation alloc]init];
-        
-            
-        
-            CLLocationCoordinate2D Coordinate = CLLocationCoordinate2DMake(str_temp_lat,str_temp_long);
-            annotation.coordinate = Coordinate;
+        MKPointAnnotation *annotation= [[MKPointAnnotation alloc]init];
+        CLLocationCoordinate2D Coordinate = CLLocationCoordinate2DMake(str_temp_lat,str_temp_long);
+        annotation.coordinate = Coordinate;
         
         
         mapview.centerCoordinate = annotation.coordinate; //focusing on marker
         
-            [mapview addAnnotation:annotation];
-            
-            
-            MKCoordinateSpan span;
-            span.latitudeDelta=0.3;
-            span.longitudeDelta=0.3;
-            MKCoordinateRegion region;
-            
+        [mapview addAnnotation:annotation];
+        
+        
+        MKCoordinateSpan span;
+        span.latitudeDelta=0.3;
+        span.longitudeDelta=0.3;
+        MKCoordinateRegion region;
+        
         mapview.delegate = self;
         
-                CLLocationCoordinate2D Coordinate1 = CLLocationCoordinate2DMake(str_temp_lat,str_temp_long);
-                
-                
-                region.center = Coordinate1;
-                             region.span=span;
-                
+        CLLocationCoordinate2D Coordinate1 = CLLocationCoordinate2DMake(str_temp_lat,str_temp_long);
+        
+        
+        region.center = Coordinate1;
+        region.span=span;
+        
         
     }];
-    
-    
-
     
     _getLocationLabel.text=[NSString stringWithFormat:@"%@", _address];
     
@@ -1074,69 +1020,21 @@ bool male_status = YES,female_status = YES,couple_status = YES;
     _musicLabel.text=[NSString stringWithFormat:@"%@",[[[serverdict objectForKey:@"events"]objectAtIndex:0]objectForKey:@"genre_of_music"]];
     NSArray *frames = [[NSArray alloc]init];
     
-    
-    
     UIImageView *animatedIMvw = [[UIImageView alloc] init];
     animatedIMvw.animationImages = frames;
     [animatedIMvw startAnimating];
-    
-    
-    ////  Here call Google Map
-    //[self mapurl:_address];
-  }
+
+}
 
 
 
 #pragma mark MapView Delegate
 
-//- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>)annotation
-//{
-//    // If it's the user location, just return nil.
-//    if ([annotation isKindOfClass:[MKUserLocation class]])
-//        return nil;
-//    
-//    // Handle any custom annotations.
-//    if ([annotation isKindOfClass:[MKPointAnnotation class]])
-//    {
-//        // Try to dequeue an existing pin view first.
-//        MKAnnotationView *pinView = (MKAnnotationView*)[mapView dequeueReusableAnnotationViewWithIdentifier:@"CustomPinAnnotationView"];
-//        if (!pinView)
-//        {
-//            
-//            pinView = [[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"CustomPinAnnotationView"];
-//            pinView.canShowCallout = YES;
-//            pinView.image = [UIImage imageNamed:@"location_cle.png"];
-//            
-//            pinView.calloutOffset = CGPointMake(0, 32);
-//            
-//            // Add a detail disclosure button to the callout.
-//            UIButton* rightButton = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
-//                      // Add an image to the left callout.
-//              
-//            UIImageView *iconView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"location_cle.png"]];
-//            
-//          
-//            
-//            
-//            
-//            
-//            pinView.leftCalloutAccessoryView = iconView;
-//        } else {
-//            pinView.annotation = annotation;
-//        }
-//        return pinView;
-//    }
-//    
-//    return nil;
-//}
-//
-
-
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
     showLocation = [locations objectAtIndex:0];
     [locationmanager stopUpdatingLocation];
-
-      NSLog(@"Detected Location : %f, %f", showLocation.coordinate.latitude, showLocation.coordinate.longitude);
+    
+    NSLog(@"Detected Location : %f, %f", showLocation.coordinate.latitude, showLocation.coordinate.longitude);
     CLGeocoder *geocoder = [[CLGeocoder alloc] init] ;
     [geocoder reverseGeocodeLocation:showLocation
                    completionHandler:^(NSArray *placemarks, NSError *error) {
@@ -1156,17 +1054,13 @@ bool male_status = YES,female_status = YES,couple_status = YES;
     ProductViewController *product=[[ProductViewController alloc]initWithNibName:@"ProductViewController" bundle:nil];
     UINavigationController *navController = self.navigationController;
     [navController popViewControllerAnimated:YES];
-
+    
 }
 
 - (IBAction)rsvpbtnAction:(id)sender {
     
     self.loginViewController = [[LoginViewController alloc] init];
     Boolean check_login = [[SharedPreferences sharedInstance] isLogin];
-    
-
-    
-    
     
     if(check_login){
         if (view_rsvp.hidden) {
@@ -1176,50 +1070,39 @@ bool male_status = YES,female_status = YES,couple_status = YES;
             view_rsvp.hidden = YES;
         view_transparent.hidden= NO;
     }else{
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Status" message:@"Please login to proceed" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Login", nil];
-        [alertView show];
+        
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Status" message:@"Please login to proceed" preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction* cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault
+                                                       handler:^(UIAlertAction * action)
+                                 {
+                                     [alertController dismissViewControllerAnimated:YES completion:nil];
+                                     
+                                 }];
+        [alertController addAction:cancel];
+        
+        
+        UIAlertAction* login = [UIAlertAction actionWithTitle:@"Login" style:UIAlertActionStyleDefault
+                                                      handler:^(UIAlertAction * action)
+                                {
+                                    LoginViewController*login=[[LoginViewController alloc]init];
+                                    [self.navigationController pushViewController:login animated:YES];
+                                }];
+        [alertController addAction:login];
+        
+        [self presentViewController:alertController animated:YES completion:nil];
+        
     }
-    
-    
-    
-    
 }
 
-
-
-- (void)alertView:(UIAlertView *)alertView
-clickedButtonAtIndex:(NSInteger)buttonIndex{
-    if (buttonIndex == [alertView cancelButtonIndex]){
-        //cancel clicked ...do your action
-    }else{
-
-        LoginViewController*login=[[LoginViewController alloc]init];
-        [self.navigationController pushViewController:login animated:YES];
-    
-    }
-}
 - (IBAction)moreBtnAction:(id)sender {
-    
-    //self.getDetailLabel.frame = CGRectMake(40,74,278,80);
-    //[_getDetailLabel setTextColor:[UIColor blackColor]];
     
     _getDetailLabel.numberOfLines = 0;
     CGSize maxSize = CGSizeMake(_getDetailLabel.bounds.size.width, CGFLOAT_MAX);
     CGSize textSize = [_getDetailLabel.text sizeWithFont:_getDetailLabel.font constrainedToSize:maxSize];
     
-    
-
-    
     _getDetailLabel.frame = CGRectMake(10, 10, textSize.width, textSize.height);
-    [moreBtn setTitle:[NSString stringWithFormat:@"Less"] forState:nil];
-    
-    
-//    [UIView animateWithDuration:0.3 animations:^{
-//        [containerView setFrame:rect];
-//        [bottomView setFrame:rect2];
-//    }];
-    
-    NSLog(@"label expanded");
+    [moreBtn setTitle:[NSString stringWithFormat:@"Less"] forState:UIControlStateNormal];
 }
 - (IBAction)callBtnAction:(id)sender {
     
@@ -1227,10 +1110,10 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
     if ([[device model] isEqualToString:@"iPhone"] ){
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"tel:07381476718"]]];
         
-       
+        
         NSURL *url = [NSURL URLWithString:@"telprompt://7381476718"];
         [[UIApplication  sharedApplication] openURL:url];
-    
+        
         
         NSString *phoneNumber = @"+917381476718"; // dynamically assigned
         NSString *phoneURLString = [NSString stringWithFormat:@"tel:%@", phoneNumber];
@@ -1238,9 +1121,7 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
         [[UIApplication sharedApplication] openURL:phoneURL];
         
     } else {
-        UIAlertView *notPermitted=[[UIAlertView alloc] initWithTitle:@"Alert" message:@"Your device doesn't support this feature." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [notPermitted show];
-       // [notPermitted release];
+        [[SharedPreferences sharedInstance] showCommonAlertWithMessage:@"Your device doesn't support this feature." withObject:self];
     }
 }
 
@@ -1249,7 +1130,7 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
     
     CLLocationCoordinate2D start = { 28.6139, 77.2090 };
     CLLocationCoordinate2D destination = { 27.1750, 78.0419 };
-
+    
     NSString *googleMapsURLString = [NSString stringWithFormat:@"http://maps.google.com/?saddr=%1.6f,%1.6f&daddr=%1.6f,%1.6f",
                                      start.latitude, start.longitude, destination.latitude, destination.longitude];
     
@@ -1261,7 +1142,7 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
 {
     MKOverlayView* overlayView = nil;
     
-    return overlayView; 
+    return overlayView;
 }
 
 -(IBAction)offer_button:(id)sender

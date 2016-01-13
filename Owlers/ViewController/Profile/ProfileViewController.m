@@ -140,8 +140,7 @@ NSURLConnection *connection_, *_connection;
             }
             else
             {
-                UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:@"Camera is not available" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
-                [alertView show];
+                [[SharedPreferences sharedInstance] showCommonAlertWithMessage:@"Camera is not available" withObject:self];
             }
             break;
         case 1:
@@ -155,8 +154,7 @@ NSURLConnection *connection_, *_connection;
             }
             else
             {
-                UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:nil message:@"Gallery is not available" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
-                [alertView show];
+                [[SharedPreferences sharedInstance] showCommonAlertWithMessage:@"Gallery is not available" withObject:self];
             }
             break;
             

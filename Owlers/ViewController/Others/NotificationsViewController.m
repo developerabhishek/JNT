@@ -27,22 +27,9 @@
 
 
 - (IBAction)backbtnAction:(id)sender {
-    SettingViewController *setting=[[SettingViewController alloc]initWithNibName:@"SettingViewController" bundle:nil];
-    UINavigationController *navController = self.navigationController;
-    [navController popViewControllerAnimated:YES];
-    
-    
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (IBAction)switchAction:(id)sender {
-    
-//    if ([self. isOn]) {
-//        self.myTextField.text = @"The Switch is Off";
-//        NSLog(@"Switch is on");
-//        [self.mySwitch setOn:NO animated:YES];
-//    } else {
-//        self.myTextField.text = @"The Switch is On";
-//        [self.mySwitch setOn:YES animated:YES];
-//    }
 }
 @end
